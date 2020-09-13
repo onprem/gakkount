@@ -15,9 +15,13 @@ import (
 func main() {
 	router := gin.Default()
 
-	router.GET("/ping", func(c *gin.Context) {
+	authorized := router.Group("/")
+	authorized.Use(authMiddleware())
+
+	authorized.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"messsage": "pong"})
 	})
+	router.POST("/login", handleUserLogin)
 
 	srv := &http.Server{
 		Addr:    "0.0.0.0:8080",
