@@ -19,9 +19,10 @@ func main() {
 	authorized.Use(authMiddleware())
 
 	authorized.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"messsage": "pong"})
+		c.JSON(http.StatusOK, gin.H{"message": "pong"})
 	})
 	router.POST("/login", handleUserLogin)
+	router.NoRoute(serveUI)
 
 	srv := &http.Server{
 		Addr:    "0.0.0.0:8080",
