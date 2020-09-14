@@ -1,0 +1,26 @@
+.input {
+  border: solid 2px gray;
+  border-radius: 0.5em;
+  background: white;
+  box-sizing: border-box;
+  padding: 0.8em 1.2em;
+  margin: 0.5em;
+}
+
+.input:focus {
+  border-color: #111111;
+}
+
+.text {
+  composes: input;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.labelSpan {
+  margin: 0.2em 0.5em;
+}

@@ -21,7 +21,9 @@ func main() {
 	authorized.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "pong"})
 	})
+	router.GET("/login", handleLoginChallenge)
 	router.POST("/login", handleUserLogin)
+	router.POST("/challenge", handleLoginChallengePost)
 	router.NoRoute(serveUI)
 
 	srv := &http.Server{
