@@ -2,14 +2,13 @@ import React from "react";
 
 import styles from "./button.module.css";
 
-export type ButtonProps = React.DetailedHTMLProps<
-  React.ButtonHTMLAttributes<HTMLButtonElement>,
-  HTMLButtonElement
->;
+export type ButtonProps = {
+  variant?: "link" | "default";
+} & React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>;
 
-export const Button: React.FC<ButtonProps> = ({ children, ...rest }) => {
+export const Button: React.FC<ButtonProps> = ({ children, variant = "default", ...rest }) => {
   return (
-    <button {...rest} className={styles.button}>
+    <button {...rest} className={styles[variant]}>
       {children}
     </button>
   );

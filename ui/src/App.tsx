@@ -1,5 +1,5 @@
 import React from "react";
-import { Login } from "./pages";
+import { Login, Consent } from "./pages";
 import "./App.css";
 import { Switch, Route } from "react-router-dom";
 
@@ -14,6 +14,9 @@ function App() {
         </Route>
         <Route exact path="/login">
           <Login />
+        </Route>
+        <Route exact path="/consent">
+          <Consent />
         </Route>
       </Switch>
     </div>

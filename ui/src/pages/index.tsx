@@ -1,3 +1,4 @@
 import Login from "./login";
+import Consent from "./consent"
 
-export { Login };
+export { Login, Consent };

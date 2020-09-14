@@ -24,6 +24,11 @@ func main() {
 	router.GET("/login", handleLoginChallenge)
 	router.POST("/login", handleUserLogin)
 	router.POST("/challenge", handleLoginChallengePost)
+
+	router.GET("/consent", handleConsent)
+	router.GET("/consent/:challenge", handleConsentMetadata)
+	router.POST("/consent", handleConcentPost)
+
 	router.NoRoute(serveUI)
 
 	srv := &http.Server{

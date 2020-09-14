@@ -3,11 +3,9 @@ package main
 import (
 	"log"
 	"net/http"
-	"net/url"
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	hydra "github.com/ory/hydra-client-go/client"
 	"github.com/ory/hydra-client-go/client/admin"
 	hydraModels "github.com/ory/hydra-client-go/models"
 )
@@ -46,8 +44,7 @@ func handleLoginChallenge(c *gin.Context) {
 		return
 	}
 
-	adminURL, _ := url.Parse("http://localhost:4445")
-	adminC := hydra.NewHTTPClientWithConfig(nil, &hydra.TransportConfig{Schemes: []string{adminURL.Scheme}, Host: adminURL.Host, BasePath: adminURL.Path})
+	adminC := getHydraAdminClient()
 
 	res, err := adminC.Admin.GetLoginRequest(admin.NewGetLoginRequestParams().WithLoginChallenge(lc))
 	if err != nil {
@@ -89,8 +86,7 @@ func handleLoginChallengePost(c *gin.Context) {
 		return
 	}
 
-	adminURL, _ := url.Parse("http://localhost:4445")
-	adminC := hydra.NewHTTPClientWithConfig(nil, &hydra.TransportConfig{Schemes: []string{adminURL.Scheme}, Host: adminURL.Host, BasePath: adminURL.Path})
+	adminC := getHydraAdminClient()
 
 	accRes, err := adminC.Admin.AcceptLoginRequest(
 		admin.

@@ -1,17 +1,28 @@
 .button {
   box-sizing: border-box;
-  padding: 0.7em 1.2em;
+  padding: 0.5em 1em;
   background: #111111;
   color: white;
   border: none;
   border-radius: 0.5em;
   text-transform: uppercase;
+  letter-spacing: 0.1em;
   font-weight: 500;
   font-size: 1em;
-  margin: 1em;
+  margin: 0.8em;
   transition: all 0.1s ease-in;
 }
 
 .button:active {
   scale: 0.8;
+}
+
+.default {
+  composes: button;
+}
+
+.link {
+  composes: button;
+  background: white;
+  color: #111111;
 }
