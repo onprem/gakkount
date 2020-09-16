@@ -1,2 +1,7 @@
 build
 .vscode
+
+# Docker volumes
+docker/db/*
+
+!.keep

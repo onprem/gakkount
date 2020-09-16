@@ -37,18 +37,24 @@ services:
     ports:
       - "5433:5432"
     environment:
-      - POSTGRES_USER=hydra
-      - POSTGRES_PASSWORD=secret
-      - POSTGRES_DB=hydra
+      POSTGRES_USER: hydra
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: hydra
+      PGDATA: /data/hydra
+    volumes:
+      - ./docker/db:/data
 
   postgres:
     image: postgres:12-alpine
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_USER=edu
-      - POSTGRES_PASSWORD=secret
-      - POSTGRES_DB=edu
+      POSTGRES_USER: edu
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: edu
+      PGDATA: /data/pg
+    volumes:
+      - ./docker/db:/data
 
   adminer:
     image: adminer
