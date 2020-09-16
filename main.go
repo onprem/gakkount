@@ -18,16 +18,18 @@ func main() {
 	authorized := router.Group("/")
 	authorized.Use(authMiddleware())
 
+	oauthR := router.Group("/oauth")
+
 	authorized.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "pong"})
 	})
-	router.GET("/login", handleLoginChallenge)
-	router.POST("/login", handleUserLogin)
-	router.POST("/challenge", handleLoginChallengePost)
+	oauthR.GET("/login", handleLoginChallenge)
+	oauthR.POST("/login", handleUserLogin)
+	oauthR.POST("/challenge", handleLoginChallengePost)
 
-	router.GET("/consent", handleConsent)
-	router.GET("/consent/:challenge", handleConsentMetadata)
-	router.POST("/consent", handleConcentPost)
+	oauthR.GET("/consent", handleConsent)
+	oauthR.GET("/consent/:challenge", handleConsentMetadata)
+	oauthR.POST("/consent", handleConcentPost)
 
 	router.NoRoute(serveUI)
 

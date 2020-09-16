@@ -15,7 +15,7 @@ export const Login: React.FC = () => {
   console.log("lc", lc);
 
   const onSubmit = (values: Record<string, any>) => {
-    fetch("/challenge", {
+    fetch("/oauth/challenge", {
       method: "POST",
       body: JSON.stringify(values),
       headers: {

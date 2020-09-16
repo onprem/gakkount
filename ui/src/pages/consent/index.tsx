@@ -5,7 +5,7 @@ import Button from "../../components/button";
 import styles from "./consent.module.css";
 
 const useConsentChallenge = (cc: string) => {
-  const { data, error } = useSWR(`/consent/${cc}`, (input: RequestInfo, init?: RequestInit) =>
+  const { data, error } = useSWR(`/oauth/consent/${cc}`, (input: RequestInfo, init?: RequestInit) =>
     fetch(input, init).then((res) => res.json())
   );
   return {
@@ -25,7 +25,7 @@ export const Consent: React.FC = () => {
   if (error) return <div>Some error occurred.</div>;
 
   const handleSubmit = (allow: boolean) => {
-    fetch("/consent", {
+    fetch("/oauth/consent", {
       method: "POST",
       body: JSON.stringify({
         allow: allow,
@@ -45,15 +45,21 @@ export const Consent: React.FC = () => {
   };
 
   const { user, client } = consent;
-  console.log("concent", consent);
+  console.log("concent", consent, client);
   return (
     <div className={styles.container}>
       <main className={styles.main}>
+        {client.logo_uri && <img src={client.logo_uri} alt="client logo" className={styles.logo} />}
         <p>
-          Hi {user}, {client.client_name || client.client_id} wants to access:
+          Hi {user}, <b>{client.client_name || client.client_id}</b> wants to access your account.
         </p>
-        <ul>
-          <li>Your profile</li>
+        <p>
+          This will allow <b>{client.client_name || client.client_id}</b> to:
+        </p>
+        <ul className={styles.list}>
+          <li>Associate you with your personal info on IIITM Accounts</li>
+          <li>See your personal info, including details like your roll no. and course</li>
+          <li>View your email address</li>
         </ul>
         <hr />
         <div className={styles.btnGroup}>

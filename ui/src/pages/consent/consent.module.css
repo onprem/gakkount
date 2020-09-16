@@ -10,12 +10,27 @@
   display: flex;
   flex-direction: column;
   width: 90%;
-  max-width: 500px;
+  max-width: 550px;
   font-size: 1.2em;
   box-sizing: border-box;
-  padding: 4em 2em;
+  padding: 3em 2em;
   background-color: #f1f1f1;
   border-radius: 1em;
+  align-items: center;
+}
+
+.logo {
+  width: 6em;
+  height: 6em;
+  border-radius: 1.5em;
+  margin: 1em;
+  box-sizing: border-box;
+  padding: 1em;
+  background: white;
+}
+
+.list {
+  width: 80%;
 }
 
 .btnGroup {

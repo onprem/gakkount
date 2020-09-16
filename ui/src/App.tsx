@@ -12,10 +12,10 @@ function App() {
             <code>IIITM Accounts</code>
           </header>
         </Route>
-        <Route exact path="/login">
+        <Route exact path="/oauth/login">
           <Login />
         </Route>
-        <Route exact path="/consent">
+        <Route exact path="/oauth/consent">
           <Consent />
         </Route>
       </Switch>

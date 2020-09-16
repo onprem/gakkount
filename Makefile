@@ -51,7 +51,7 @@ ui-build:
 
 .PHONY: assets
 assets: ## Repacks all static assets into go file for easier deploy.
-assets: $(GOBINDATA)
+assets: $(GOBINDATA) ui-build
 	@echo ">> generating assets"
 	@go generate
 
