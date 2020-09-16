@@ -15,6 +15,8 @@ const (
 	FieldName = "name"
 	// FieldEmail holds the string denoting the email field in the database.
 	FieldEmail = "email"
+	// FieldHash holds the string denoting the hash field in the database.
+	FieldHash = "hash"
 	// FieldRole holds the string denoting the role field in the database.
 	FieldRole = "role"
 	// FieldPhoto holds the string denoting the photo field in the database.
@@ -70,6 +72,7 @@ var Columns = []string{
 	FieldID,
 	FieldName,
 	FieldEmail,
+	FieldHash,
 	FieldRole,
 	FieldPhoto,
 	FieldAltEmail,
@@ -102,6 +105,7 @@ const (
 	RoleStudent Role = "student"
 	RoleFaculty Role = "faculty"
 	RoleStaff   Role = "staff"
+	RoleAdmin   Role = "admin"
 )
 
 func (r Role) String() string {
@@ -111,7 +115,7 @@ func (r Role) String() string {
 // RoleValidator is a validator for the "role" field enum values. It is called by the builders before save.
 func RoleValidator(r Role) error {
 	switch r {
-	case RoleStudent, RoleFaculty, RoleStaff:
+	case RoleStudent, RoleFaculty, RoleStaff, RoleAdmin:
 		return nil
 	default:
 		return fmt.Errorf("user: invalid enum value for role field: %q", r)

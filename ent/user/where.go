@@ -107,6 +107,13 @@ func Email(v string) predicate.User {
 	})
 }
 
+// Hash applies equality check predicate on the "hash" field. It's identical to HashEQ.
+func Hash(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldHash), v))
+	})
+}
+
 // Photo applies equality check predicate on the "photo" field. It's identical to PhotoEQ.
 func Photo(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
@@ -410,6 +417,117 @@ func EmailEqualFold(v string) predicate.User {
 func EmailContainsFold(v string) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		s.Where(sql.ContainsFold(s.C(FieldEmail), v))
+	})
+}
+
+// HashEQ applies the EQ predicate on the "hash" field.
+func HashEQ(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldHash), v))
+	})
+}
+
+// HashNEQ applies the NEQ predicate on the "hash" field.
+func HashNEQ(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldHash), v))
+	})
+}
+
+// HashIn applies the In predicate on the "hash" field.
+func HashIn(vs ...string) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldHash), v...))
+	})
+}
+
+// HashNotIn applies the NotIn predicate on the "hash" field.
+func HashNotIn(vs ...string) predicate.User {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.User(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldHash), v...))
+	})
+}
+
+// HashGT applies the GT predicate on the "hash" field.
+func HashGT(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldHash), v))
+	})
+}
+
+// HashGTE applies the GTE predicate on the "hash" field.
+func HashGTE(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldHash), v))
+	})
+}
+
+// HashLT applies the LT predicate on the "hash" field.
+func HashLT(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldHash), v))
+	})
+}
+
+// HashLTE applies the LTE predicate on the "hash" field.
+func HashLTE(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldHash), v))
+	})
+}
+
+// HashContains applies the Contains predicate on the "hash" field.
+func HashContains(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.Contains(s.C(FieldHash), v))
+	})
+}
+
+// HashHasPrefix applies the HasPrefix predicate on the "hash" field.
+func HashHasPrefix(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.HasPrefix(s.C(FieldHash), v))
+	})
+}
+
+// HashHasSuffix applies the HasSuffix predicate on the "hash" field.
+func HashHasSuffix(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.HasSuffix(s.C(FieldHash), v))
+	})
+}
+
+// HashEqualFold applies the EqualFold predicate on the "hash" field.
+func HashEqualFold(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.EqualFold(s.C(FieldHash), v))
+	})
+}
+
+// HashContainsFold applies the ContainsFold predicate on the "hash" field.
+func HashContainsFold(v string) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		s.Where(sql.ContainsFold(s.C(FieldHash), v))
 	})
 }
 

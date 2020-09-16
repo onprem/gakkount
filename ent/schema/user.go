@@ -16,7 +16,8 @@ func (User) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name"),
 		field.String("email").Unique(),
-		field.Enum("role").Values("student", "faculty", "staff").Default("student"),
+		field.String("hash"),
+		field.Enum("role").Values("student", "faculty", "staff", "admin").Default("student"),
 		field.String("photo").Optional(),
 		field.String("altEmail").Optional(),
 		field.String("phone").Optional(),

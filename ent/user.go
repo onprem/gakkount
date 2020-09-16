@@ -22,6 +22,8 @@ type User struct {
 	Name string `json:"name,omitempty"`
 	// Email holds the value of the "email" field.
 	Email string `json:"email,omitempty"`
+	// Hash holds the value of the "hash" field.
+	Hash string `json:"hash,omitempty"`
 	// Role holds the value of the "role" field.
 	Role user.Role `json:"role,omitempty"`
 	// Photo holds the value of the "photo" field.
@@ -100,6 +102,7 @@ func (*User) scanValues() []interface{} {
 		&sql.NullInt64{},  // id
 		&sql.NullString{}, // name
 		&sql.NullString{}, // email
+		&sql.NullString{}, // hash
 		&sql.NullString{}, // role
 		&sql.NullString{}, // photo
 		&sql.NullString{}, // altEmail
@@ -147,71 +150,76 @@ func (u *User) assignValues(values ...interface{}) error {
 		u.Email = value.String
 	}
 	if value, ok := values[2].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field role", values[2])
+		return fmt.Errorf("unexpected type %T for field hash", values[2])
+	} else if value.Valid {
+		u.Hash = value.String
+	}
+	if value, ok := values[3].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field role", values[3])
 	} else if value.Valid {
 		u.Role = user.Role(value.String)
 	}
-	if value, ok := values[3].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field photo", values[3])
+	if value, ok := values[4].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field photo", values[4])
 	} else if value.Valid {
 		u.Photo = value.String
 	}
-	if value, ok := values[4].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field altEmail", values[4])
+	if value, ok := values[5].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field altEmail", values[5])
 	} else if value.Valid {
 		u.AltEmail = value.String
 	}
-	if value, ok := values[5].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field phone", values[5])
+	if value, ok := values[6].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field phone", values[6])
 	} else if value.Valid {
 		u.Phone = value.String
 	}
-	if value, ok := values[6].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field salutation", values[6])
+	if value, ok := values[7].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field salutation", values[7])
 	} else if value.Valid {
 		u.Salutation = value.String
 	}
-	if value, ok := values[7].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field linkedin", values[7])
+	if value, ok := values[8].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field linkedin", values[8])
 	} else if value.Valid {
 		u.Linkedin = value.String
 	}
-	if value, ok := values[8].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field twitter", values[8])
+	if value, ok := values[9].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field twitter", values[9])
 	} else if value.Valid {
 		u.Twitter = value.String
 	}
-	if value, ok := values[9].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field facebook", values[9])
+	if value, ok := values[10].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field facebook", values[10])
 	} else if value.Valid {
 		u.Facebook = value.String
 	}
-	if value, ok := values[10].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field github", values[10])
+	if value, ok := values[11].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field github", values[11])
 	} else if value.Valid {
 		u.Github = value.String
 	}
-	if value, ok := values[11].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field rollNo", values[11])
+	if value, ok := values[12].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field rollNo", values[12])
 	} else if value.Valid {
 		u.RollNo = value.String
 	}
-	if value, ok := values[12].(*sql.NullTime); !ok {
-		return fmt.Errorf("unexpected type %T for field admissionTime", values[12])
+	if value, ok := values[13].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field admissionTime", values[13])
 	} else if value.Valid {
 		u.AdmissionTime = value.Time
 	}
-	if value, ok := values[13].(*sql.NullTime); !ok {
-		return fmt.Errorf("unexpected type %T for field courseEndTime", values[13])
+	if value, ok := values[14].(*sql.NullTime); !ok {
+		return fmt.Errorf("unexpected type %T for field courseEndTime", values[14])
 	} else if value.Valid {
 		u.CourseEndTime = value.Time
 	}
-	if value, ok := values[14].(*sql.NullString); !ok {
-		return fmt.Errorf("unexpected type %T for field Designation", values[14])
+	if value, ok := values[15].(*sql.NullString); !ok {
+		return fmt.Errorf("unexpected type %T for field Designation", values[15])
 	} else if value.Valid {
 		u.Designation = value.String
 	}
-	values = values[15:]
+	values = values[16:]
 	if len(values) == len(user.ForeignKeys) {
 		if value, ok := values[0].(*sql.NullInt64); !ok {
 			return fmt.Errorf("unexpected type %T for edge-field course_users", value)
@@ -266,6 +274,8 @@ func (u *User) String() string {
 	builder.WriteString(u.Name)
 	builder.WriteString(", email=")
 	builder.WriteString(u.Email)
+	builder.WriteString(", hash=")
+	builder.WriteString(u.Hash)
 	builder.WriteString(", role=")
 	builder.WriteString(fmt.Sprintf("%v", u.Role))
 	builder.WriteString(", photo=")

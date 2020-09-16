@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"net/http"
@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func authMiddleware() gin.HandlerFunc {
+func (a *API) authMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tok, err := c.Cookie("token")
 		if err != nil {
@@ -14,13 +14,14 @@ func authMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		claims, err := verifyToken(tok)
+		claims, err := a.verifyToken(tok)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"status": "error", "error": "Authentication required"})
 			return
 		}
 
 		c.Set("email", claims["email"])
+		c.Set("role", claims["role"])
 		c.Next()
 	}
 }

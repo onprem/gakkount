@@ -920,6 +920,7 @@ type UserMutation struct {
 	id                *int
 	name              *string
 	email             *string
+	hash              *string
 	role              *user.Role
 	photo             *string
 	altEmail          *string
@@ -1093,6 +1094,43 @@ func (m *UserMutation) OldEmail(ctx context.Context) (v string, err error) {
 // ResetEmail reset all changes of the "email" field.
 func (m *UserMutation) ResetEmail() {
 	m.email = nil
+}
+
+// SetHash sets the hash field.
+func (m *UserMutation) SetHash(s string) {
+	m.hash = &s
+}
+
+// Hash returns the hash value in the mutation.
+func (m *UserMutation) Hash() (r string, exists bool) {
+	v := m.hash
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHash returns the old hash value of the User.
+// If the User object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *UserMutation) OldHash(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldHash is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldHash requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHash: %w", err)
+	}
+	return oldValue.Hash, nil
+}
+
+// ResetHash reset all changes of the "hash" field.
+func (m *UserMutation) ResetHash() {
+	m.hash = nil
 }
 
 // SetRole sets the role field.
@@ -1824,12 +1862,15 @@ func (m *UserMutation) Type() string {
 // this mutation. Note that, in order to get all numeric
 // fields that were in/decremented, call AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.name != nil {
 		fields = append(fields, user.FieldName)
 	}
 	if m.email != nil {
 		fields = append(fields, user.FieldEmail)
+	}
+	if m.hash != nil {
+		fields = append(fields, user.FieldHash)
 	}
 	if m.role != nil {
 		fields = append(fields, user.FieldRole)
@@ -1882,6 +1923,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Name()
 	case user.FieldEmail:
 		return m.Email()
+	case user.FieldHash:
+		return m.Hash()
 	case user.FieldRole:
 		return m.Role()
 	case user.FieldPhoto:
@@ -1921,6 +1964,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldName(ctx)
 	case user.FieldEmail:
 		return m.OldEmail(ctx)
+	case user.FieldHash:
+		return m.OldHash(ctx)
 	case user.FieldRole:
 		return m.OldRole(ctx)
 	case user.FieldPhoto:
@@ -1969,6 +2014,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetEmail(v)
+		return nil
+	case user.FieldHash:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHash(v)
 		return nil
 	case user.FieldRole:
 		v, ok := value.(user.Role)
@@ -2191,6 +2243,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldEmail:
 		m.ResetEmail()
+		return nil
+	case user.FieldHash:
+		m.ResetHash()
 		return nil
 	case user.FieldRole:
 		m.ResetRole()

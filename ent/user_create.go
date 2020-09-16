@@ -34,6 +34,12 @@ func (uc *UserCreate) SetEmail(s string) *UserCreate {
 	return uc
 }
 
+// SetHash sets the hash field.
+func (uc *UserCreate) SetHash(s string) *UserCreate {
+	uc.mutation.SetHash(s)
+	return uc
+}
+
 // SetRole sets the role field.
 func (uc *UserCreate) SetRole(u user.Role) *UserCreate {
 	uc.mutation.SetRole(u)
@@ -307,6 +313,9 @@ func (uc *UserCreate) preSave() error {
 	if _, ok := uc.mutation.Email(); !ok {
 		return &ValidationError{Name: "email", err: errors.New("ent: missing required field \"email\"")}
 	}
+	if _, ok := uc.mutation.Hash(); !ok {
+		return &ValidationError{Name: "hash", err: errors.New("ent: missing required field \"hash\"")}
+	}
 	if _, ok := uc.mutation.Role(); !ok {
 		v := user.DefaultRole
 		uc.mutation.SetRole(v)
@@ -358,6 +367,14 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Column: user.FieldEmail,
 		})
 		u.Email = value
+	}
+	if value, ok := uc.mutation.Hash(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: user.FieldHash,
+		})
+		u.Hash = value
 	}
 	if value, ok := uc.mutation.Role(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

@@ -42,6 +42,12 @@ func (uu *UserUpdate) SetEmail(s string) *UserUpdate {
 	return uu
 }
 
+// SetHash sets the hash field.
+func (uu *UserUpdate) SetHash(s string) *UserUpdate {
+	uu.mutation.SetHash(s)
+	return uu
+}
+
 // SetRole sets the role field.
 func (uu *UserUpdate) SetRole(u user.Role) *UserUpdate {
 	uu.mutation.SetRole(u)
@@ -440,6 +446,13 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: user.FieldEmail,
 		})
 	}
+	if value, ok := uu.mutation.Hash(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: user.FieldHash,
+		})
+	}
 	if value, ok := uu.mutation.Role(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeEnum,
@@ -700,6 +713,12 @@ func (uuo *UserUpdateOne) SetName(s string) *UserUpdateOne {
 // SetEmail sets the email field.
 func (uuo *UserUpdateOne) SetEmail(s string) *UserUpdateOne {
 	uuo.mutation.SetEmail(s)
+	return uuo
+}
+
+// SetHash sets the hash field.
+func (uuo *UserUpdateOne) SetHash(s string) *UserUpdateOne {
+	uuo.mutation.SetHash(s)
 	return uuo
 }
 
@@ -1097,6 +1116,13 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (u *User, err error) {
 			Type:   field.TypeString,
 			Value:  value,
 			Column: user.FieldEmail,
+		})
+	}
+	if value, ok := uuo.mutation.Hash(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: user.FieldHash,
 		})
 	}
 	if value, ok := uuo.mutation.Role(); ok {

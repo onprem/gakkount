@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"net/url"
@@ -6,8 +6,8 @@ import (
 	hydra "github.com/ory/hydra-client-go/client"
 )
 
-func getHydraAdminClient() *hydra.OryHydra {
-	adminURL, _ := url.Parse("http://localhost:4445")
+func getHydraAdminClient(hydraURL string) *hydra.OryHydra {
+	adminURL, _ := url.Parse(hydraURL)
 	return hydra.NewHTTPClientWithConfig(
 		nil,
 		&hydra.TransportConfig{

@@ -46,14 +46,14 @@ build: assets
 ui-build: ## Builds the static assets of the React UI.
 ui-build:
 	@echo ">> generating production build"
-	@cd ui && yarn build
+	@cd pkg/ui/react && yarn build
 
 
 .PHONY: assets
 assets: ## Repacks all static assets into go file for easier deploy.
 assets: $(GOBINDATA) ui-build
 	@echo ">> generating assets"
-	@go generate
+	@go generate ./pkg/ui
 
 
 .PHONY: docker

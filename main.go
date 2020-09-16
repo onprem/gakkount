@@ -9,29 +9,31 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/prmsrswt/edu-accounts/ent"
+	"github.com/prmsrswt/edu-accounts/pkg/api"
+	"github.com/prmsrswt/edu-accounts/pkg/ui"
+
 	"github.com/gin-gonic/gin"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
+	client, err := ent.Open("sqlite3", "file:ent?mode=memory&cache=shared&_fk=1")
+	if err != nil {
+		log.Fatalf("failed opening connection to sqlite: %v", err)
+	}
+	defer client.Close()
+	// Run the auto migration tool.
+	if err := client.Schema.Create(context.Background()); err != nil {
+		log.Fatalf("failed creating schema resources: %v", err)
+	}
+
+	api := api.NewAPI(client, "http://localhost:4445")
 	router := gin.Default()
 
-	authorized := router.Group("/")
-	authorized.Use(authMiddleware())
+	router.NoRoute(ui.ServeUI)
 
-	oauthR := router.Group("/oauth")
-
-	authorized.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "pong"})
-	})
-	oauthR.GET("/login", handleLoginChallenge)
-	oauthR.POST("/login", handleUserLogin)
-	oauthR.POST("/challenge", handleLoginChallengePost)
-
-	oauthR.GET("/consent", handleConsent)
-	oauthR.GET("/consent/:challenge", handleConsentMetadata)
-	oauthR.POST("/consent", handleConcentPost)
-
-	router.NoRoute(serveUI)
+	api.Register(router)
 
 	srv := &http.Server{
 		Addr:    "0.0.0.0:8080",

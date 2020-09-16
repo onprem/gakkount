@@ -39,7 +39,8 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "email", Type: field.TypeString, Unique: true},
-		{Name: "role", Type: field.TypeEnum, Enums: []string{"student", "faculty", "staff"}, Default: "student"},
+		{Name: "hash", Type: field.TypeString},
+		{Name: "role", Type: field.TypeEnum, Enums: []string{"student", "faculty", "staff", "admin"}, Default: "student"},
 		{Name: "photo", Type: field.TypeString, Nullable: true},
 		{Name: "alt_email", Type: field.TypeString, Nullable: true},
 		{Name: "phone", Type: field.TypeString, Nullable: true},
@@ -63,14 +64,14 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:  "users_courses_users",
-				Columns: []*schema.Column{UsersColumns[16]},
+				Columns: []*schema.Column{UsersColumns[17]},
 
 				RefColumns: []*schema.Column{CoursesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:  "users_departments_users",
-				Columns: []*schema.Column{UsersColumns[17]},
+				Columns: []*schema.Column{UsersColumns[18]},
 
 				RefColumns: []*schema.Column{DepartmentsColumns[0]},
 				OnDelete:   schema.SetNull,

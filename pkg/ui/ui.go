@@ -1,7 +1,7 @@
-//go:generate go-bindata -pkg main -o bindata.go --prefix ui/build/ ui/build/...
+//go:generate go-bindata -pkg ui -o bindata.go --prefix react/build/ react/build/...
 //go:generate go fmt .
 
-package main
+package ui
 
 import (
 	"mime"
@@ -12,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func renderIndex(c *gin.Context) {
+func RenderIndex(c *gin.Context) {
 	idx, err := Asset("index.html")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, "Something went wrong")
@@ -21,12 +21,12 @@ func renderIndex(c *gin.Context) {
 	c.Data(http.StatusOK, "text/html", idx)
 }
 
-func serveUI(c *gin.Context) {
+func ServeUI(c *gin.Context) {
 	fileName := strings.TrimPrefix(c.Request.URL.Path, "/")
 
 	file, err := Asset(fileName)
 	if err != nil {
-		renderIndex(c)
+		RenderIndex(c)
 		return
 	}
 

@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"fmt"
@@ -7,24 +7,23 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-const jwtSecret = "jWt5upeRS3crE7"
-
-func createToken(email string) (string, error) {
+func (a *API) createToken(email, role string) (string, error) {
 	claims := jwt.MapClaims{}
 	claims["email"] = email
+	claims["role"] = role
 	claims["exp"] = time.Now().Add(time.Hour * 48).Unix()
 
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return at.SignedString([]byte(jwtSecret))
+	return at.SignedString([]byte(a.jwtSecret))
 }
 
-func verifyToken(tok string) (jwt.MapClaims, error) {
+func (a *API) verifyToken(tok string) (jwt.MapClaims, error) {
 	token, err := jwt.Parse(tok, func(token *jwt.Token) (interface{}, error) {
 		//Make sure that the token method conform to "SigningMethodHMAC"
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %w", token.Header["alg"])
 		}
-		return []byte(jwtSecret), nil
+		return []byte(a.jwtSecret), nil
 	})
 	if err != nil {
 		return nil, err
