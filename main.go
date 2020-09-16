@@ -14,13 +14,13 @@ import (
 	"github.com/prmsrswt/edu-accounts/pkg/ui"
 
 	"github.com/gin-gonic/gin"
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/lib/pq"
 )
 
 func main() {
-	client, err := ent.Open("sqlite3", "file:ent?mode=memory&cache=shared&_fk=1")
+	client, err := ent.Open("postgres", "postgresql://edu:secret@127.0.0.1:5432/edu?sslmode=disable")
 	if err != nil {
-		log.Fatalf("failed opening connection to sqlite: %v", err)
+		log.Fatalf("failed opening connection to database: %v", err)
 	}
 	defer client.Close()
 	// Run the auto migration tool.

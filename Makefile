@@ -71,6 +71,18 @@ docker-push:
 	@docker push prmsrswt/$(PROJECTNAME):$(TAG)
 
 
+.PHONY: up
+up: ## Runs docker compose setup
+up:
+	@docker-compose up -d
+
+
+.PHONY: down
+down: ## Stops docker compose setup
+down:
+	@docker-compose down
+
+
 .PHONY: vet
 vet: ## Runs go vet against all packages.
 vet:

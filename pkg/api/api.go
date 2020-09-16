@@ -31,8 +31,6 @@ func NewAPI(store *ent.Client, hydraAdminURL string) *API {
 
 // Register is used to register all of the API routes
 func (a *API) Register(router *gin.Engine) {
-	a.createDummy()
-
 	a.registerAPIRoutes(router.Group("/api"))
 	a.registerOAuthRoutes(router.Group("/oauth"))
 }

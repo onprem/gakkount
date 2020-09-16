@@ -1,0 +1,57 @@
+version: '3.2'
+
+services:
+  hydra:
+    image: oryd/hydra:v1.7.4
+    ports:
+      - "4444:4444"
+      - "4445:4445"
+    command:
+      serve all --dangerous-force-http
+    environment:
+      - URLS_SELF_ISSUER=http://127.0.0.1:4444
+      - URLS_CONSENT=http://127.0.0.1:8080/oauth/consent
+      - URLS_LOGIN=http://127.0.0.1:8080/oauth/login
+      - URLS_LOGOUT=http://127.0.0.1:8080/oauth/logout
+      - DSN=postgres://hydra:secret@hpostgresd:5432/hydra?sslmode=disable&max_conns=20&max_idle_conns=4
+      - SECRETS_SYSTEM=youReallyNeedToChangeThis-No
+      - OIDC_SUBJECT_IDENTIFIERS_SUPPORTED_TYPES=public,pairwise
+      - OIDC_SUBJECT_IDENTIFIERS_PAIRWISE_SALT=youReallyNeedToChangeThis-OkayButNo
+      - SERVE_COOKIES_SAME_SITE_MODE=Lax
+    restart: unless-stopped
+    depends_on:
+      - hydra-migrate
+
+  hydra-migrate:
+    image: oryd/hydra:v1.7.4
+    environment:
+      - DSN=postgres://hydra:secret@hpostgresd:5432/hydra?sslmode=disable&max_conns=20&max_idle_conns=4
+    command:
+      migrate sql -e --yes
+    restart: on-failure
+    depends_on:
+      - hpostgresd
+
+  hpostgresd:
+    image: postgres:12-alpine
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=hydra
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=hydra
+
+  postgres:
+    image: postgres:12-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=edu
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=edu
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8000:8080

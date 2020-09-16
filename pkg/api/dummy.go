@@ -3,9 +3,11 @@ package api
 import (
 	"context"
 	"errors"
+	"net/http"
 	"strings"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/prmsrswt/edu-accounts/ent"
 )
 
@@ -101,7 +103,13 @@ func (a *API) createDepartment(ctx context.Context, name string) (*ent.Departmen
 		Save(ctx)
 }
 
-func (a *API) createDummy() {
+func (a *API) createDummy(c *gin.Context) {
+	role := c.GetString("role")
+	if role != "admin" {
+		respondError(http.StatusForbidden, "forbidden", c)
+		return
+	}
+
 	ctx := context.Background()
 	imt, _ := a.createCourse(ctx, "IPG MTech", "IMT", 10)
 	img, _ := a.createCourse(ctx, "IPG MBA", "IMG", 10)
@@ -116,4 +124,6 @@ func (a *API) createDummy() {
 	a.createStudent(ctx, "imt99@iiitm.ac.in", "Shubham Shukla", "2014imt-068", "1234", oldT, oldT.AddDate(5, 0, 0), imt)
 
 	a.createAdmin(ctx, "admin@iiitm.ac.in", "Admin", "1234")
+
+	c.JSON(http.StatusOK, gin.H{"status": "success", "message": "created dummy accounts"})
 }
