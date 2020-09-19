@@ -1,4 +1,4 @@
-import Login from "./login";
+import OAuthLogin from "./oauthLogin";
 import Consent from "./consent"
 
-export { Login, Consent };
+export { OAuthLogin, Consent };

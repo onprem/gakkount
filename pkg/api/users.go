@@ -64,5 +64,68 @@ func (a *API) handleUserLogin(c *gin.Context) {
 	}
 
 	c.SetCookie("token", token, 3600*48, "/", "", false, true)
+	c.SetCookie("signedin", "true", 3600*48, "/", "", false, false)
 	c.JSON(http.StatusOK, gin.H{"status": "success", "message": "Successfully logged in"})
+}
+
+func (a *API) queryUser(c *gin.Context) {
+	email := c.GetString("email")
+
+	usr, err := a.store.User.Query().Where(user.EmailEQ(email)).WithCourse().WithDepartment().Only(context.TODO())
+	if err != nil {
+		respInternalServerErr(fmt.Errorf("api: query user: %w", err), c)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"status": "success", "user": usr})
+}
+
+func (a *API) handleSelfUpdate(c *gin.Context) {
+	email := c.GetString("email")
+
+	var i struct {
+		Photo    string `json:"photo" binding:"omitempty,url"`
+		AltEmail string `json:"altEmail" binding:"omitempty,email"`
+		Phone    string `json:"phone" binding:"-"`
+		// social
+		LinkedIn string `json:"linkedin" binding:"omitempty,url"`
+		Twitter  string `json:"twitter" binding:"omitempty,url"`
+		Facebook string `json:"facebook" binding:"omitempty,url"`
+		Github   string `json:"github" binding:"omitempty,url"`
+	}
+
+	if err := c.ShouldBindJSON(&i); err != nil {
+		respondError(http.StatusBadRequest, err.Error(), c)
+		return
+	}
+
+	x := a.store.User.Update().Where(user.EmailEQ(email))
+
+	if i.Photo != "" {
+		x.SetPhoto(i.Photo)
+	}
+	if i.AltEmail != "" {
+		x.SetAltEmail(i.AltEmail)
+	}
+	if i.Phone != "" {
+		x.SetPhone(i.Phone)
+	}
+	if i.LinkedIn != "" {
+		x.SetLinkedin(i.LinkedIn)
+	}
+	if i.Twitter != "" {
+		x.SetTwitter(i.Twitter)
+	}
+	if i.Facebook != "" {
+		x.SetFacebook(i.Facebook)
+	}
+	if i.Github != "" {
+		x.SetGithub(i.Github)
+	}
+
+	err := x.Exec(context.TODO())
+	if err != nil {
+		respInternalServerErr(fmt.Errorf("api: update user: %w", err), c)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"status": "success", "message": "User info updated"})
 }

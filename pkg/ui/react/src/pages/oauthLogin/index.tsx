@@ -1,17 +1,21 @@
 import React from "react";
+import { useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
 import styles from "./login.module.css";
 import { Text, Label } from "../../components/form";
 import Button from "../../components/button";
-import { useAuth } from "../../contexts/auth";
 
-export const Login: React.FC = () => {
+export const OAuthLogin: React.FC = () => {
   const { register, handleSubmit } = useForm();
-  const { setIsLoggedIn } = useAuth()
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+  const lc = query.get("login_challenge");
+
+  console.log("lc", lc);
 
   const onSubmit = (values: Record<string, any>) => {
-    fetch("/api/login", {
+    fetch("/oauth/challenge", {
       method: "POST",
       body: JSON.stringify(values),
       headers: {
@@ -20,8 +24,9 @@ export const Login: React.FC = () => {
     })
       .then((res) => res.json())
       .then((res) => {
+        console.log(res);
         if (res.status === "success") {
-          setIsLoggedIn(true)
+          window.location = res.redirectTo;
         }
       });
   };
@@ -40,10 +45,18 @@ export const Login: React.FC = () => {
             inpRef={register({ required: "Password is required" })}
           />
         </Label>
+        {lc && (
+          <input
+            type="hidden"
+            name="challenge"
+            value={lc}
+            ref={register({ required: "Login challenge is required" })}
+          />
+        )}
         <Button type="submit">Log In</Button>
       </form>
     </div>
   );
 };
 
-export default Login;
+export default OAuthLogin;
