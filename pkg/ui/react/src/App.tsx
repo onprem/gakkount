@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Switch, Route } from "react-router-dom";
 import cookie from "js-cookie";
+import { SWRConfig } from "swr";
+
 import { AuthContext } from "./contexts/auth";
-import { OAuthLogin, Consent, Profile, Login } from "./pages";
-import "./App.css";
+import fetcher from "./utils/fetcher";
 import { User } from "./interfaces";
+
+import { OAuthLogin, Consent, Profile, Login } from "./pages";
 import ProtectedRoute from "./components/protectedRoute";
+import Nav from "./components/nav";
+
+import "./App.css";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(cookie.get("signedin") === "true");
@@ -21,35 +27,46 @@ function App() {
         })
         .catch(() => setIsLoggedIn(false));
     }
+    else if (!isLoggedIn && user) {
+      setUser(undefined)
+    }
   }, [isLoggedIn, setIsLoggedIn, user, setUser]);
   return (
     <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, user, setUser }}>
-      <div className="App">
-        <Switch>
-          <Route exact path="/">
-            <header className="App-header">
-              <code>IIITM Accounts</code>
-            </header>
-          </Route>
-          <Route exact path="/oauth/login">
-            <OAuthLogin />
-          </Route>
-          <Route exact path="/oauth/consent">
-            <Consent />
-          </Route>
-          <Route path="/login">
-            <Login />
-          </Route>
-          <ProtectedRoute path="/dashboard">
-            <header className="App-header">
-              <code>Hello, {user?.name} </code>
-            </header>
-          </ProtectedRoute>
-          <ProtectedRoute path="/profile">
-            <Profile />
-          </ProtectedRoute>
-        </Switch>
-      </div>
+      <SWRConfig
+        value={{
+          fetcher,
+          revalidateOnFocus: false,
+        }}
+      >
+        <div className="App">
+          <Nav />
+          <Switch>
+            <Route exact path="/">
+              <header className="App-header">
+                <code>IIITM Accounts</code>
+              </header>
+            </Route>
+            <Route exact path="/oauth/login">
+              <OAuthLogin />
+            </Route>
+            <Route exact path="/oauth/consent">
+              <Consent />
+            </Route>
+            <Route path="/login">
+              <Login />
+            </Route>
+            <ProtectedRoute path="/dashboard">
+              <header className="App-header">
+                <code>Hello, {user?.name} </code>
+              </header>
+            </ProtectedRoute>
+            <ProtectedRoute path="/profile">
+              <Profile />
+            </ProtectedRoute>
+          </Switch>
+        </div>
+      </SWRConfig>
     </AuthContext.Provider>
   );
 }

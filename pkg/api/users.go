@@ -68,6 +68,12 @@ func (a *API) handleUserLogin(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "success", "message": "Successfully logged in"})
 }
 
+func (a *API) handleUserLogout(c *gin.Context) {
+	c.SetCookie("token", "", 0, "/", "", false, true)
+	c.SetCookie("signedin", "false", 0, "/", "", false, false)
+	c.JSON(http.StatusOK, gin.H{"status": "success", "message": "Successfully logged out"})
+}
+
 func (a *API) queryUser(c *gin.Context) {
 	email := c.GetString("email")
 

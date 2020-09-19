@@ -6,28 +6,25 @@ import { Text, Label } from "../../components/form";
 import Button from "../../components/button";
 import { useAuth } from "../../contexts/auth";
 import { Redirect, useLocation } from "react-router-dom";
+import useSWRPost from "../../hooks/useSWRPost";
+import { ReactComponent as LoadingIcon } from "../../assets/three-dots.svg";
 
 export const Login: React.FC = () => {
   const { register, handleSubmit } = useForm();
   const { isLoggedIn, setIsLoggedIn } = useAuth();
   const location = useLocation<{ referrer?: Location }>();
+  const [runLogin, { isValidating }] = useSWRPost<string>("/api/login", {
+    onSuccess: (res) => {
+      if (res.status === "success") {
+        setIsLoggedIn(true);
+      }
+    },
+  });
 
-  if (isLoggedIn) return <Redirect to={location.state?.referrer || "/dashboard"} />
+  if (isLoggedIn) return <Redirect to={location.state?.referrer || "/profile"} />;
 
   const onSubmit = (values: Record<string, any>) => {
-    fetch("/api/login", {
-      method: "POST",
-      body: JSON.stringify(values),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        if (res.status === "success") {
-          setIsLoggedIn(true);
-        }
-      });
+    runLogin(JSON.stringify(values));
   };
 
   return (
@@ -44,7 +41,9 @@ export const Login: React.FC = () => {
             inpRef={register({ required: "Password is required" })}
           />
         </Label>
-        <Button type="submit">Log In</Button>
+        <Button type="submit" disabled={isValidating}>
+          {isValidating ? <LoadingIcon style={{ height: "1em" }} /> : `Log In`}
+        </Button>
       </form>
     </div>
   );

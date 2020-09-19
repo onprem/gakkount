@@ -1,0 +1,30 @@
+.nav {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5em 4em;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 2.2em;
+  background: white;
+  margin-right: 1em;
+}
+
+.title {
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  font-size: 1.2em;
+}
+
+.btn {
+  margin: 0;
+}

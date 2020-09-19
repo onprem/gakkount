@@ -3,6 +3,8 @@ import { useLocation } from "react-router-dom";
 import useSWR from "swr";
 import Button from "../../components/button";
 import styles from "./consent.module.css";
+import useSWRPost from "../../hooks/useSWRPost";
+import { ReactComponent as LoadingIcon } from "../../assets/three-dots.svg";
 
 const useConsentChallenge = (cc: string) => {
   const { data, error } = useSWR(`/oauth/consent/${cc}`, (input: RequestInfo, init?: RequestInit) =>
@@ -19,29 +21,31 @@ export const Consent: React.FC = () => {
   const location = useLocation();
   const query = new URLSearchParams(location.search);
   const cc = query.get("consent_challenge") || "";
+  const [giveConsent, { isValidating }] = useSWRPost("/oauth/consent", {
+    onSuccess: (res) => {
+      console.log(res);
+      if (res.status === "success") {
+        window.location = res.redirectTo;
+      }
+    },
+  });
 
   const { consent, error, loading } = useConsentChallenge(cc);
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Some error occurred.</div>;
+  if (loading)
+    return (
+      <div className={styles.container}>
+        <LoadingIcon style={{ height: "3em" }} />
+      </div>
+    );
+  if (error) return <div className={styles.container}>Some error occurred.</div>;
 
   const handleSubmit = (allow: boolean) => {
-    fetch("/oauth/consent", {
-      method: "POST",
-      body: JSON.stringify({
+    giveConsent(
+      JSON.stringify({
         allow: allow,
         challenge: cc,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        console.log(res);
-        if (res.status === "success") {
-          window.location = res.redirectTo;
-        }
-      });
+      })
+    );
   };
 
   const { user, client } = consent;
@@ -63,11 +67,16 @@ export const Consent: React.FC = () => {
         </ul>
         <hr />
         <div className={styles.btnGroup}>
-          <Button type="button" variant="link" onClick={() => handleSubmit(false)}>
+          <Button
+            type="button"
+            variant="link"
+            disabled={isValidating}
+            onClick={() => handleSubmit(false)}
+          >
             Deny
           </Button>
-          <Button type="button" onClick={() => handleSubmit(true)}>
-            Allow
+          <Button type="button" disabled={isValidating} onClick={() => handleSubmit(true)}>
+            {isValidating ? <LoadingIcon style={{ height: "1em" }} /> : `Allow`}
           </Button>
         </div>
       </main>

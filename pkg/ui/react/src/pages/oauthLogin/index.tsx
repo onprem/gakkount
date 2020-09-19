@@ -5,30 +5,29 @@ import { useForm } from "react-hook-form";
 import styles from "./login.module.css";
 import { Text, Label } from "../../components/form";
 import Button from "../../components/button";
+import useSWRPost from "../../hooks/useSWRPost";
+import { ReactComponent as LoadingIcon } from "../../assets/three-dots.svg";
+import { useAuth } from "../../contexts/auth";
 
 export const OAuthLogin: React.FC = () => {
   const { register, handleSubmit } = useForm();
   const location = useLocation();
   const query = new URLSearchParams(location.search);
   const lc = query.get("login_challenge");
+  const { isLoggedIn, user } = useAuth();
+
+  const [acceptChallenge, { isValidating }] = useSWRPost<string>("/oauth/challenge", {
+    onSuccess: (res) => {
+      if (res.status === "success") {
+        window.location = res.redirectTo;
+      }
+    },
+  });
 
   console.log("lc", lc);
 
   const onSubmit = (values: Record<string, any>) => {
-    fetch("/oauth/challenge", {
-      method: "POST",
-      body: JSON.stringify(values),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        console.log(res);
-        if (res.status === "success") {
-          window.location = res.redirectTo;
-        }
-      });
+    acceptChallenge(JSON.stringify(values));
   };
 
   return (
@@ -36,7 +35,12 @@ export const OAuthLogin: React.FC = () => {
       <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
         <h2>Login to continue</h2>
         <Label value="Email">
-          <Text type="text" name="email" inpRef={register({ required: "Email is required" })} />
+          <Text
+            type="text"
+            name="email"
+            inpRef={register({ required: "Email is required" })}
+            defaultValue={isLoggedIn ? user?.email : ""}
+          />
         </Label>
         <Label value="Password">
           <Text
@@ -53,7 +57,9 @@ export const OAuthLogin: React.FC = () => {
             ref={register({ required: "Login challenge is required" })}
           />
         )}
-        <Button type="submit">Log In</Button>
+        <Button type="submit" disabled={isValidating}>
+          {isValidating ? <LoadingIcon style={{ height: "1em" }} /> : `Log In`}
+        </Button>
       </form>
     </div>
   );

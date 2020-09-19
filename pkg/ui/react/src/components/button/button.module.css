@@ -27,3 +27,10 @@
   background: white;
   color: #111111;
 }
+
+.pill {
+  composes: button;
+  background: white;
+  color: #111111;
+  border: solid 2px #111111;
+}

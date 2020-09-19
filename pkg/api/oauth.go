@@ -66,7 +66,11 @@ func (a *API) handleOAuthLoginPost(c *gin.Context) {
 		admin.
 			NewAcceptLoginRequestParams().
 			WithLoginChallenge(input.Challenge).
-			WithBody(&hydraModels.AcceptLoginRequest{Subject: &usr.Email}),
+			WithBody(&hydraModels.AcceptLoginRequest{
+				Subject:     &usr.Email,
+				Remember:    true,
+				RememberFor: 0,
+			}),
 	)
 	if err != nil {
 		respInternalServerErr(fmt.Errorf("login: hydra: accept login req: %w", err), c)
@@ -117,7 +121,7 @@ func (a *API) acceptConsent(challenge string, payload *hydraModels.ConsentReques
 			GrantScope:               payload.RequestedScope,
 			GrantAccessTokenAudience: payload.RequestedAccessTokenAudience,
 			Remember:                 true,
-			RememberFor:              3600 * 48,
+			RememberFor:              0,
 			Session: &hydraModels.ConsentRequestSession{
 				IDToken: idTkn,
 			},
@@ -144,6 +148,7 @@ func (a *API) handleConsent(c *gin.Context) {
 			return
 		}
 		c.Redirect(http.StatusTemporaryRedirect, *accRes.Payload.RedirectTo)
+		return
 	}
 
 	ui.RenderIndex(c)
