@@ -4,4 +4,7 @@ export interface User {
   role: "student" | "faculty" | "staff" | "admin";
   photo?: string
   altEmail?: string
+  phone?: string
+  // student
+  rollNo?: string
 }

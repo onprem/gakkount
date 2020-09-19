@@ -5,10 +5,14 @@ import styles from "./login.module.css";
 import { Text, Label } from "../../components/form";
 import Button from "../../components/button";
 import { useAuth } from "../../contexts/auth";
+import { Redirect, useLocation } from "react-router-dom";
 
 export const Login: React.FC = () => {
   const { register, handleSubmit } = useForm();
-  const { setIsLoggedIn } = useAuth()
+  const { isLoggedIn, setIsLoggedIn } = useAuth();
+  const location = useLocation<{ referrer?: Location }>();
+
+  if (isLoggedIn) return <Redirect to={location.state?.referrer || "/dashboard"} />
 
   const onSubmit = (values: Record<string, any>) => {
     fetch("/api/login", {
@@ -21,7 +25,7 @@ export const Login: React.FC = () => {
       .then((res) => res.json())
       .then((res) => {
         if (res.status === "success") {
-          setIsLoggedIn(true)
+          setIsLoggedIn(true);
         }
       });
   };

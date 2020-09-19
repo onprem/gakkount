@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Switch, Route } from "react-router-dom";
 import cookie from "js-cookie";
 import { AuthContext } from "./contexts/auth";
-import { OAuthLogin, Consent } from "./pages";
+import { OAuthLogin, Consent, Profile, Login } from "./pages";
 import "./App.css";
 import { User } from "./interfaces";
+import ProtectedRoute from "./components/protectedRoute";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(cookie.get("signedin") === "true");
@@ -36,6 +37,17 @@ function App() {
           <Route exact path="/oauth/consent">
             <Consent />
           </Route>
+          <Route path="/login">
+            <Login />
+          </Route>
+          <ProtectedRoute path="/dashboard">
+            <header className="App-header">
+              <code>Hello, {user?.name} </code>
+            </header>
+          </ProtectedRoute>
+          <ProtectedRoute path="/profile">
+            <Profile />
+          </ProtectedRoute>
         </Switch>
       </div>
     </AuthContext.Provider>

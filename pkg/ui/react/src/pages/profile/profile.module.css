@@ -1,0 +1,78 @@
+.main {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.udMain {
+  width: 100%;
+  display: flex;
+  box-sizing: border-box;
+  padding: 2em 10%;
+  background: #f1f1f1;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.photo {
+  width: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.photo > img {
+  width: 196px;
+  height: 196px;
+  border-radius: 50%;
+}
+
+.details {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 0em 1em;
+  font-size: 1.2em;
+}
+
+.role {
+  background: #111111;
+  padding: 0.5em 1.2em;
+  border-radius: 2em;
+  color: #f1f1f1;
+  font-size: 0.8em;
+  width: max-content;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+.info {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  box-sizing: border-box;
+  padding: 1em 0em;
+}
+
+.info > span {
+  width: 50%;
+  margin: 0.5em 0;
+}
+
+@media only screen and (max-width: 500px) {
+  .udMain {
+    flex-direction: column;
+    padding: 1em;
+  }
+
+  .photo, .details {
+    width: unset;
+  }
+
+  .info > span {
+    width: unset;
+  }
+}
