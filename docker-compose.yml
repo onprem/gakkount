@@ -57,7 +57,7 @@ services:
       - ./docker/db:/data
 
   adminer:
-    image: adminer
+    image: adminer:4.7
     restart: always
     ports:
       - 8000:8080

@@ -18,7 +18,31 @@ func (a *API) queryAllUsers(c *gin.Context) {
 		return
 	}
 
-	users, err := a.store.User.Query().WithCourse().WithDepartment().All(context.TODO())
+	var filter struct {
+		Role  user.Role `json:"role"`
+		Limit int       `json:"limit"`
+		Page  int       `json:"page"`
+	}
+	if err := c.ShouldBindJSON(&filter); err != nil {
+		respondError(http.StatusBadRequest, err.Error(), c)
+		return
+	}
+
+	query := a.store.User.Query().
+		WithCourse().
+		WithDepartment().
+		Order(ent.Desc(user.FieldAdmissionTime)).
+		Offset(filter.Page * filter.Limit)
+
+	if filter.Limit != 0 {
+		query = query.Limit(filter.Limit)
+	}
+
+	if role != "" {
+		query = query.Where(user.RoleEQ(filter.Role))
+	}
+
+	users, err := query.All(context.TODO())
 	if err != nil {
 		respInternalServerErr(fmt.Errorf("api: queryall: %w", err), c)
 		return

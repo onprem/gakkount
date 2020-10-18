@@ -179,6 +179,7 @@ func (a *API) handleConsentPost(c *gin.Context) {
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{"status": "success", "redirectTo": res.Payload.RedirectTo})
+		return
 	}
 
 	res, err := a.hc.Admin.GetConsentRequest(admin.NewGetConsentRequestParams().WithConsentChallenge(input.Challenge))
