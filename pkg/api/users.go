@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -18,28 +19,22 @@ func (a *API) queryAllUsers(c *gin.Context) {
 		return
 	}
 
-	var filter struct {
-		Role  user.Role `json:"role"`
-		Limit int       `json:"limit"`
-		Page  int       `json:"page"`
-	}
-	if err := c.ShouldBindJSON(&filter); err != nil {
-		respondError(http.StatusBadRequest, err.Error(), c)
-		return
-	}
+	roleFilter := user.Role(c.Query("role"))
+	limit, _ := strconv.Atoi(c.Query("limit"))
+	page, _ := strconv.Atoi(c.Query("page"))
 
 	query := a.store.User.Query().
 		WithCourse().
 		WithDepartment().
 		Order(ent.Desc(user.FieldAdmissionTime)).
-		Offset(filter.Page * filter.Limit)
+		Offset(page * limit)
 
-	if filter.Limit != 0 {
-		query = query.Limit(filter.Limit)
+	if limit != 0 {
+		query = query.Limit(limit)
 	}
 
-	if role != "" {
-		query = query.Where(user.RoleEQ(filter.Role))
+	if roleFilter != "" {
+		query = query.Where(user.RoleEQ(roleFilter))
 	}
 
 	users, err := query.All(context.TODO())

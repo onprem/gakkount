@@ -1,0 +1,64 @@
+.main {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 0 15rem;
+}
+
+.head {
+  width: 100%;
+}
+
+.options {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 2rem 0;
+}
+
+.user {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 0.7rem 1rem;
+}
+
+.user:nth-child(odd) {
+  background: #eaeaf0;
+}
+
+.topUser {
+  font-weight: 600;
+  border-bottom: solid 2px black;
+}
+
+.idSpan {
+  width: 10%;
+}
+
+.nameSpan {
+  width: 25%;
+}
+
+.emailSpan {
+  width: 25%;
+}
+
+.rollSpan {
+  width: 20%;
+}
+
+.courseSpan {
+  width: 20%;
+}

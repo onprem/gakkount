@@ -7,7 +7,7 @@ import Button from "../button";
 import styles from "./nav.module.css";
 
 export const Nav: React.FC = () => {
-  const { isLoggedIn, setIsLoggedIn } = useAuth();
+  const { isLoggedIn, setIsLoggedIn, user } = useAuth();
   const handleLogout = () => {
     fetch("/api/logout")
       .then((res) => res.json())
@@ -24,12 +24,22 @@ export const Nav: React.FC = () => {
         </Link>
       </div>
       <div>
+        {user?.role === "admin" && (
+          <Link className={styles.link} to="/admin">
+            Manage
+          </Link>
+        )}
         {isLoggedIn ? (
-          <Button className={styles.btn} onClick={handleLogout}>
-            LOGOUT
-          </Button>
+          <>
+            <Link className={styles.link} to="/profile">
+              Profile
+            </Link>
+            <Button className={styles.btn} onClick={handleLogout}>
+              LOGOUT
+            </Button>
+          </>
         ) : (
-          <Button className={styles.btn}  variant="pill">
+          <Button className={styles.btn} variant="pill">
             <Link to="/login">LOGIN</Link>
           </Button>
         )}

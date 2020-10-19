@@ -7,7 +7,7 @@ import { AuthContext } from "./contexts/auth";
 import fetcher from "./utils/fetcher";
 import { User } from "./interfaces";
 
-import { OAuthLogin, Consent, Profile, Login } from "./pages";
+import { OAuthLogin, Consent, Profile, Login, Users } from "./pages";
 import ProtectedRoute from "./components/protectedRoute";
 import Nav from "./components/nav";
 
@@ -26,9 +26,8 @@ function App() {
           else setIsLoggedIn(false);
         })
         .catch(() => setIsLoggedIn(false));
-    }
-    else if (!isLoggedIn && user) {
-      setUser(undefined)
+    } else if (!isLoggedIn && user) {
+      setUser(undefined);
     }
   }, [isLoggedIn, setIsLoggedIn, user, setUser]);
   return (
@@ -63,6 +62,9 @@ function App() {
             </ProtectedRoute>
             <ProtectedRoute path="/profile">
               <Profile />
+            </ProtectedRoute>
+            <ProtectedRoute path="/admin">
+              <Users />
             </ProtectedRoute>
           </Switch>
         </div>
