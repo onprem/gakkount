@@ -50,3 +50,36 @@ func (a *API) handleNewCourse(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"status": "success", "message": "New course created", "course": course})
 }
+
+func (a *API) handleUpdateCourse(c *gin.Context) {
+	var i struct {
+		ID        int    `json:"id" binding:"required"`
+		Name      string `json:"name" binding:"-"`
+		Code      string `json:"code" binding:"-"`
+		Semesters int    `json:"semesters" binding:"-"`
+	}
+
+	if err := c.ShouldBindJSON(&i); err != nil {
+		respondError(http.StatusBadRequest, err.Error(), c)
+		return
+	}
+
+	x := a.store.Course.UpdateOneID(i.ID)
+
+	if i.Name != "" {
+		x.SetName(i.Name)
+	}
+	if i.Code != "" {
+		x.SetCode(i.Code)
+	}
+	if i.Semesters != 0 {
+		x.SetSemesters(i.Semesters)
+	}
+
+	course, err := x.Save(context.TODO())
+	if err != nil {
+		respInternalServerErr(fmt.Errorf("api: update course: %w", err), c)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"status": "success", "message": "Course updated", "course": course})
+}

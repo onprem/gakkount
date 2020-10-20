@@ -23,6 +23,11 @@ func (a *API) registerAPIRoutes(router *gin.RouterGroup) {
 
 	adminR.GET("/courses", a.queryAllCourses)
 	adminR.POST("/course", a.handleNewCourse)
+	adminR.PATCH("/course", a.handleUpdateCourse)
+
+	adminR.GET("/departments", a.queryAllDepartments)
+	adminR.POST("/department", a.handleNewDepartment)
+	adminR.PATCH("/department", a.handleUpdateDepartment)
 }
 
 func (a *API) registerOAuthRoutes(router *gin.RouterGroup) {
