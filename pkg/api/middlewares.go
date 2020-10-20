@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (a *API) authMiddleware() gin.HandlerFunc {
+func (a *API) authMiddleware(onlyAdmin bool) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tok, err := c.Cookie("token")
 		if err != nil {
@@ -16,6 +16,11 @@ func (a *API) authMiddleware() gin.HandlerFunc {
 
 		claims, err := a.verifyToken(tok)
 		if err != nil {
+			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"status": "error", "error": "Authentication required"})
+			return
+		}
+
+		if onlyAdmin && claims["role"] != "admin" {
 			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"status": "error", "error": "Authentication required"})
 			return
 		}

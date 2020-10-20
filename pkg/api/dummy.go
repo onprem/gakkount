@@ -104,12 +104,6 @@ func (a *API) createDepartment(ctx context.Context, name string) (*ent.Departmen
 }
 
 func (a *API) createDummy(c *gin.Context) {
-	role := c.GetString("role")
-	if role != "admin" {
-		respondError(http.StatusForbidden, "forbidden", c)
-		return
-	}
-
 	ctx := context.Background()
 	imt, _ := a.createCourse(ctx, "IPG MTech", "IMT", 10)
 	img, _ := a.createCourse(ctx, "IPG MBA", "IMG", 10)

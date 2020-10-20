@@ -13,12 +13,6 @@ import (
 )
 
 func (a *API) queryAllUsers(c *gin.Context) {
-	role := c.GetString("role")
-	if role != "admin" {
-		respondError(http.StatusForbidden, "forbidden", c)
-		return
-	}
-
 	roleFilter := user.Role(c.Query("role"))
 	limit, _ := strconv.Atoi(c.Query("limit"))
 	page, _ := strconv.Atoi(c.Query("page"))
