@@ -18,7 +18,7 @@ func (a *API) createStudent(
 	course *ent.Course,
 ) (*ent.User, error) {
 	email = strings.ToLower(email)
-	rollNo = strings.ToLower(rollNo)
+	rollNo = strings.ToUpper(rollNo)
 
 	if !strings.HasSuffix(email, "@"+a.domain) {
 		return nil, errors.New("invalid primary email")

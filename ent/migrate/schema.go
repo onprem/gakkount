@@ -40,7 +40,7 @@ var (
 		{Name: "name", Type: field.TypeString},
 		{Name: "email", Type: field.TypeString, Unique: true},
 		{Name: "hash", Type: field.TypeString},
-		{Name: "role", Type: field.TypeEnum, Enums: []string{"student", "faculty", "staff", "admin"}, Default: "student"},
+		{Name: "role", Type: field.TypeEnum, Enums: []string{"student", "faculty", "staff", "admin", "misc"}, Default: "student"},
 		{Name: "photo", Type: field.TypeString, Nullable: true},
 		{Name: "alt_email", Type: field.TypeString, Nullable: true},
 		{Name: "phone", Type: field.TypeString, Nullable: true},

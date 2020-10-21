@@ -17,6 +17,7 @@ func (a *API) registerAPIRoutes(router *gin.RouterGroup) {
 	router.POST("/login", a.handleUserLogin)
 	router.GET("/logout", a.handleUserLogout)
 	adminR.GET("/users", a.queryAllUsers)
+	adminR.POST("/user", a.handleNewUser)
 	authR.GET("/user", a.queryUser)
 	authR.PATCH("/user", a.handleSelfUpdate)
 	adminR.GET("/dummy", a.createDummy)

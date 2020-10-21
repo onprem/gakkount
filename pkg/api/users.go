@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/prmsrswt/edu-accounts/ent"
@@ -147,4 +148,75 @@ func (a *API) handleSelfUpdate(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"status": "success", "message": "User info updated"})
+}
+
+func (a *API) handleNewUser(c *gin.Context) {
+	var i struct {
+		// required
+		Name     string `json:"name" binding:"required"`
+		Email    string `json:"email" binding:"required,email"`
+		Password string `json:"password" binding:"required,min=4"`
+		Role     string `json:"role" binding:"required"`
+		// optional
+		Photo    string `json:"photo" binding:"omitempty,url"`
+		AltEmail string `json:"altEmail" binding:"omitempty,email"`
+		Phone    string `json:"phone"`
+		// social
+		LinkedIn string `json:"linkedin" binding:"omitempty,url"`
+		Twitter  string `json:"twitter" binding:"omitempty,url"`
+		Facebook string `json:"facebook" binding:"omitempty,url"`
+		Github   string `json:"github" binding:"omitempty,url"`
+		// student
+		RollNo        string    `json:"rollNo"`
+		AdmissionTime time.Time `json:"admissionTime"`
+		CourseEndTime time.Time `json:"courseEndTime"`
+		// staff
+		Designation string `json:"designation"`
+		Salutation  string `json:"salutation"`
+	}
+
+	if err := c.ShouldBindJSON(&i); err != nil {
+		respondError(http.StatusBadRequest, err.Error(), c)
+		return
+	}
+	i.Email = strings.ToLower(i.Email)
+	if !strings.HasSuffix(i.Email, "@"+a.domain) {
+		respondError(http.StatusBadRequest, "invalid primary email", c)
+		return
+	}
+
+	role := user.Role(i.Role)
+
+	x := a.store.User.Create().
+		SetName(i.Name).
+		SetEmail(i.Email).
+		SetRole(role).
+		SetPhoto(i.Photo).
+		SetAltEmail(strings.ToLower(i.AltEmail)).
+		SetPhone(i.Phone).
+		SetLinkedin(i.LinkedIn).
+		SetTwitter(i.Twitter).
+		SetFacebook(i.Facebook).
+		SetGithub(i.Github)
+
+	switch role {
+	case user.RoleStudent:
+		i.RollNo = strings.ToUpper(i.RollNo)
+		if i.AdmissionTime.After(i.CourseEndTime) {
+			respondError(http.StatusBadRequest, "courseEndTime should be after admissionTime", c)
+			return
+		}
+		x.SetRollNo(i.RollNo).SetAdmissionTime(i.AdmissionTime).SetCourseEndTime(i.CourseEndTime)
+	case user.RoleFaculty:
+		x.SetSalutation(i.Salutation)
+	case user.RoleStaff:
+		x.SetDesignation(i.Designation)
+	}
+
+	usr, err := x.Save(context.TODO())
+	if err != nil {
+		respInternalServerErr(fmt.Errorf("api: create user: %w", err), c)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"status": "success", "message": "User created", "user": usr})
 }
