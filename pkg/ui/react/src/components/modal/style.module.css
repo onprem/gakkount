@@ -1,0 +1,27 @@
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.main {
+  min-width: 600px;
+  background: white;
+  box-sizing: border-box;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-height: 90vh;
+  overflow-y: scroll;
+}

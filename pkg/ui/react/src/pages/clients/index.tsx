@@ -1,13 +1,175 @@
 import React, { useState } from "react";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
+import { useForm } from "react-hook-form";
 
 import Layout from "../../components/layout";
-import styles from "./style.module.css";
-import { ExtClient } from "../../interfaces";
-import { ReactComponent as LoadingIcon } from "../../assets/three-dots.svg";
-import { ReactComponent as ClientIcon } from "../../assets/client.svg";
 import Button from "../../components/button";
 import { Label, Text } from "../../components/form";
+import Modal from "../../components/modal";
+
+import { ReactComponent as LoadingIcon } from "../../assets/three-dots.svg";
+import { ReactComponent as ClientIcon } from "../../assets/client.svg";
+import { ExtClient } from "../../interfaces";
+
+import styles from "./style.module.css";
+import useSWRPost from "../../hooks/useSWRPost";
+
+interface Payload {
+  name: string;
+  grantTypes: string;
+  responseTypes: string;
+  scope: string;
+  callbacks: string;
+  origins: string;
+  logoURI: string;
+  privacyURI: string;
+  tosURI: string;
+}
+
+const AddClient = () => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { register, handleSubmit } = useForm<Payload>();
+  const [createClient, { isValidating }] = useSWRPost<string>("/api/client", {
+    onSuccess: (res) => {
+      if (res.status === "success") {
+        mutate("/api/clients");
+        setIsOpen(false);
+      } else console.log(res);
+    },
+    onError: console.log,
+  });
+
+  const onSubmit = (values: Payload) => {
+    const {
+      name,
+      grantTypes,
+      responseTypes,
+      scope,
+      callbacks,
+      origins,
+      logoURI,
+      tosURI,
+      privacyURI,
+    } = values;
+    const p = {
+      name,
+      logoURI,
+      privacyURI,
+      tosURI,
+      grantTypes: grantTypes.split(","),
+      responseTypes: responseTypes.split(","),
+      scope: scope.split(","),
+      callbacks: callbacks.split(","),
+      origins: origins.split(","),
+    };
+    createClient(JSON.stringify(p));
+  };
+  return (
+    <>
+      <Button
+        type="button"
+        style={{ background: "var(--color-brand)", width: "max-content" }}
+        onClick={() => setIsOpen(true)}
+      >
+        Add New Client
+      </Button>
+      <Modal isOpen={isOpen} toggleModal={setIsOpen}>
+        <form onSubmit={handleSubmit(onSubmit)} className={styles.addForm}>
+          <h2>Create New OAuth Client</h2>
+          <Label value="Name *">
+            <Text
+              name="name"
+              placeholder="Name of the Application"
+              inpRef={register({
+                required: true,
+              })}
+            />
+          </Label>
+          <Label value="Grant Types *">
+            <Text
+              name="grantTypes"
+              placeholder="Grant types you need"
+              defaultValue="authorization_code,refresh_token"
+              inpRef={register({
+                required: true,
+                pattern: {
+                  value: /^[a-z_,]+$/,
+                  message: "invalid grant types",
+                },
+              })}
+            />
+          </Label>
+          <Label value="Response Types *">
+            <Text
+              name="responseTypes"
+              placeholder="Response types you need"
+              defaultValue="code,id_token"
+              inpRef={register({
+                required: true,
+                pattern: {
+                  value: /^[a-z_,]+$/,
+                  message: "invalid response types",
+                },
+              })}
+            />
+          </Label>
+          <Label value="Scope *">
+            <Text
+              name="scope"
+              placeholder="Enter scope"
+              defaultValue="openid,offline"
+              inpRef={register({
+                required: true,
+                pattern: {
+                  value: /^[a-z_,]+$/,
+                  message: "invalid scope",
+                },
+              })}
+            />
+          </Label>
+          <Label value="Callback URLs *">
+            <Text
+              name="callbacks"
+              placeholder="https://example.org/callback,https://example.net/back"
+              inpRef={register({
+                required: true,
+              })}
+            />
+          </Label>
+          <Label value="Origins *">
+            <Text
+              name="origins"
+              placeholder="https://example.org,http://localhost:8080"
+              inpRef={register({
+                required: true,
+              })}
+            />
+          </Label>
+          <Label value="Logo URI">
+            <Text name="logoURI" placeholder="https://example.org/logo.png" inpRef={register()} />
+          </Label>
+          <Label value="Privacy policy URI">
+            <Text name="privacyURI" placeholder="https://example.org/privacy" inpRef={register()} />
+          </Label>
+          <Label value="Terms of Service URI">
+            <Text name="tosURI" placeholder="https://example.org/tos" inpRef={register()} />
+          </Label>
+          <Button
+            type="button"
+            onClick={() => setIsOpen(false)}
+            style={{ background: "var(--color-danger)" }}
+            disabled={isValidating}
+          >
+            Cancel
+          </Button>
+          <Button style={{ background: "var(--color-success)" }} disabled={isValidating}>
+            Submit
+          </Button>
+        </form>
+      </Modal>
+    </>
+  );
+};
 
 interface Response {
   status: string;
@@ -28,11 +190,14 @@ const Profile = () => {
       </Layout>
     );
 
+  console.log(data);
+
   return (
     <Layout>
       <main className={styles.main}>
         <section className={styles.left}>
           <h1>OAuth Clients</h1>
+          <AddClient />
           <div className={styles.cards}>
             {data?.clients?.map((e) => (
               <div className={styles.client} key={e.client.clientID}>
@@ -62,10 +227,10 @@ const Profile = () => {
             <>
               <h2>{client.client.name}</h2>
               <Label value="Client ID">
-                <Text defaultValue={client.client.clientID} readOnly />
+                <Text value={client.client.clientID} readOnly />
               </Label>
               <Label value="Client Secret">
-                <Text defaultValue={client.client.secret} readOnly />
+                <Text value={client.client.secret} readOnly />
               </Label>
             </>
           ) : (
