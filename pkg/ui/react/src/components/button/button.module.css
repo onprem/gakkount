@@ -24,8 +24,8 @@
 
 .link {
   composes: button;
-  background: white;
-  color: #111111;
+  background: transparent;
+  color: inherit;
 }
 
 .pill {

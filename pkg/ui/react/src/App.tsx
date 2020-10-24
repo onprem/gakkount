@@ -7,7 +7,7 @@ import { AuthContext } from "./contexts/auth";
 import fetcher from "./utils/fetcher";
 import { User } from "./interfaces";
 
-import { OAuthLogin, Consent, Profile, Login, Users, Logout } from "./pages";
+import { OAuthLogin, Consent, Profile, Login, Users, Logout, Clients } from "./pages";
 import ProtectedRoute from "./components/protectedRoute";
 // import Nav from "./components/nav";
 
@@ -62,6 +62,9 @@ function App() {
             </ProtectedRoute>
             <ProtectedRoute exact path="/profile">
               <Profile />
+            </ProtectedRoute>
+            <ProtectedRoute exact path="/profile/clients">
+              <Clients />
             </ProtectedRoute>
             <ProtectedRoute path="/admin">
               <Users />

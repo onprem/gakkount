@@ -1,0 +1,116 @@
+.main {
+  width: 100%;
+  display: flex;
+  --width: 64%;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.left {
+  width: var(--width);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 2rem;
+}
+
+.left > h1 {
+  font-size: 3rem;
+  margin: 1rem 0rem;
+}
+
+.cards {
+  width: 100%;
+  min-height: 60vh;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  /* align-items: center; */
+  border-right: solid 2px #bfbfbf;
+}
+
+.client {
+  width: calc(50% - 1rem);
+  height: max-content;
+  box-sizing: border-box;
+  padding: 1rem 1rem;
+  padding-bottom: 1.5rem;
+  background: var(--color-bg-light);
+  border-radius: 0.3rem;
+  display: flex;
+  flex-direction: column;
+  margin: 1rem 0rem;
+}
+
+.nameDiv {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.nameDiv > img {
+  height: 3rem;
+  margin-right: 1rem;
+}
+
+.nameDiv > h3 {
+  margin: 0.5rem 0rem;
+}
+
+.client > hr {
+  width: 100%;
+  border: 1px solid #bfbfbf;
+}
+
+.dateDiv {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dateDiv > p {
+  font-size: 0.8rem;
+  margin: 0rem;
+}
+
+.dateDiv > button {
+  letter-spacing: unset;
+  text-transform: unset;
+  color: var(--color-hint);
+  padding: 0rem;
+  margin: 0rem;
+}
+
+.right {
+  display: flex;
+  flex-direction: column;
+  width: calc(100% - var(--width));
+  box-sizing: border-box;
+  padding: 9rem 1rem;
+}
+
+.empty {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #bfbfbf;
+}
+
+.icon {
+  width: 7rem;
+}
+
+.empty > h3 {
+  font-weight: 500;
+  font-size: 2rem;
+}
