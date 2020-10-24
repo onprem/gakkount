@@ -41,5 +41,6 @@ func (User) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("course", Course.Type).Ref("users").Unique(),
 		edge.From("department", Department.Type).Ref("users").Unique(),
+		edge.From("oclients", OClient.Type).Ref("user"),
 	}
 }

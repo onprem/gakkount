@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"errors"
 	"fmt"
 	"math"
@@ -13,6 +14,7 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/prmsrswt/edu-accounts/ent/course"
 	"github.com/prmsrswt/edu-accounts/ent/department"
+	"github.com/prmsrswt/edu-accounts/ent/oclient"
 	"github.com/prmsrswt/edu-accounts/ent/predicate"
 	"github.com/prmsrswt/edu-accounts/ent/user"
 )
@@ -28,6 +30,7 @@ type UserQuery struct {
 	// eager-loading edges.
 	withCourse     *CourseQuery
 	withDepartment *DepartmentQuery
+	withOclients   *OClientQuery
 	withFKs        bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -87,6 +90,24 @@ func (uq *UserQuery) QueryDepartment() *DepartmentQuery {
 			sqlgraph.From(user.Table, user.FieldID, uq.sqlQuery()),
 			sqlgraph.To(department.Table, department.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, user.DepartmentTable, user.DepartmentColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryOclients chains the current query on the oclients edge.
+func (uq *UserQuery) QueryOclients() *OClientQuery {
+	query := &OClientQuery{config: uq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, uq.sqlQuery()),
+			sqlgraph.To(oclient.Table, oclient.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, user.OclientsTable, user.OclientsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -295,6 +316,17 @@ func (uq *UserQuery) WithDepartment(opts ...func(*DepartmentQuery)) *UserQuery {
 	return uq
 }
 
+//  WithOclients tells the query-builder to eager-loads the nodes that are connected to
+// the "oclients" edge. The optional arguments used to configure the query builder of the edge.
+func (uq *UserQuery) WithOclients(opts ...func(*OClientQuery)) *UserQuery {
+	query := &OClientQuery{config: uq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withOclients = query
+	return uq
+}
+
 // GroupBy used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -362,9 +394,10 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 		nodes       = []*User{}
 		withFKs     = uq.withFKs
 		_spec       = uq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			uq.withCourse != nil,
 			uq.withDepartment != nil,
+			uq.withOclients != nil,
 		}
 	)
 	if uq.withCourse != nil || uq.withDepartment != nil {
@@ -444,6 +477,34 @@ func (uq *UserQuery) sqlAll(ctx context.Context) ([]*User, error) {
 			for i := range nodes {
 				nodes[i].Edges.Department = n
 			}
+		}
+	}
+
+	if query := uq.withOclients; query != nil {
+		fks := make([]driver.Value, 0, len(nodes))
+		nodeids := make(map[int]*User)
+		for i := range nodes {
+			fks = append(fks, nodes[i].ID)
+			nodeids[nodes[i].ID] = nodes[i]
+		}
+		query.withFKs = true
+		query.Where(predicate.OClient(func(s *sql.Selector) {
+			s.Where(sql.InValues(user.OclientsColumn, fks...))
+		}))
+		neighbors, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, n := range neighbors {
+			fk := n.oclient_user
+			if fk == nil {
+				return nil, fmt.Errorf(`foreign-key "oclient_user" is nil for node %v`, n.ID)
+			}
+			node, ok := nodeids[*fk]
+			if !ok {
+				return nil, fmt.Errorf(`unexpected foreign-key "oclient_user" returned %v for node %v`, *fk, n.ID)
+			}
+			node.Edges.Oclients = append(node.Edges.Oclients, n)
 		}
 	}
 

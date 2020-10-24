@@ -11,6 +11,7 @@ import (
 
 	"github.com/prmsrswt/edu-accounts/ent/course"
 	"github.com/prmsrswt/edu-accounts/ent/department"
+	"github.com/prmsrswt/edu-accounts/ent/oclient"
 	"github.com/prmsrswt/edu-accounts/ent/user"
 
 	"github.com/facebook/ent/dialect"
@@ -27,6 +28,8 @@ type Client struct {
 	Course *CourseClient
 	// Department is the client for interacting with the Department builders.
 	Department *DepartmentClient
+	// OClient is the client for interacting with the OClient builders.
+	OClient *OClientClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 }
@@ -44,6 +47,7 @@ func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Course = NewCourseClient(c.config)
 	c.Department = NewDepartmentClient(c.config)
+	c.OClient = NewOClientClient(c.config)
 	c.User = NewUserClient(c.config)
 }
 
@@ -79,6 +83,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		config:     cfg,
 		Course:     NewCourseClient(cfg),
 		Department: NewDepartmentClient(cfg),
+		OClient:    NewOClientClient(cfg),
 		User:       NewUserClient(cfg),
 	}, nil
 }
@@ -97,6 +102,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		config:     cfg,
 		Course:     NewCourseClient(cfg),
 		Department: NewDepartmentClient(cfg),
+		OClient:    NewOClientClient(cfg),
 		User:       NewUserClient(cfg),
 	}, nil
 }
@@ -128,6 +134,7 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	c.Course.Use(hooks...)
 	c.Department.Use(hooks...)
+	c.OClient.Use(hooks...)
 	c.User.Use(hooks...)
 }
 
@@ -339,6 +346,110 @@ func (c *DepartmentClient) Hooks() []Hook {
 	return c.hooks.Department
 }
 
+// OClientClient is a client for the OClient schema.
+type OClientClient struct {
+	config
+}
+
+// NewOClientClient returns a client for the OClient from the given config.
+func NewOClientClient(c config) *OClientClient {
+	return &OClientClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `oclient.Hooks(f(g(h())))`.
+func (c *OClientClient) Use(hooks ...Hook) {
+	c.hooks.OClient = append(c.hooks.OClient, hooks...)
+}
+
+// Create returns a create builder for OClient.
+func (c *OClientClient) Create() *OClientCreate {
+	mutation := newOClientMutation(c.config, OpCreate)
+	return &OClientCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// BulkCreate returns a builder for creating a bulk of OClient entities.
+func (c *OClientClient) CreateBulk(builders ...*OClientCreate) *OClientCreateBulk {
+	return &OClientCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for OClient.
+func (c *OClientClient) Update() *OClientUpdate {
+	mutation := newOClientMutation(c.config, OpUpdate)
+	return &OClientUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *OClientClient) UpdateOne(o *OClient) *OClientUpdateOne {
+	mutation := newOClientMutation(c.config, OpUpdateOne, withOClient(o))
+	return &OClientUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *OClientClient) UpdateOneID(id int) *OClientUpdateOne {
+	mutation := newOClientMutation(c.config, OpUpdateOne, withOClientID(id))
+	return &OClientUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for OClient.
+func (c *OClientClient) Delete() *OClientDelete {
+	mutation := newOClientMutation(c.config, OpDelete)
+	return &OClientDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *OClientClient) DeleteOne(o *OClient) *OClientDeleteOne {
+	return c.DeleteOneID(o.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *OClientClient) DeleteOneID(id int) *OClientDeleteOne {
+	builder := c.Delete().Where(oclient.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &OClientDeleteOne{builder}
+}
+
+// Query returns a query builder for OClient.
+func (c *OClientClient) Query() *OClientQuery {
+	return &OClientQuery{config: c.config}
+}
+
+// Get returns a OClient entity by its id.
+func (c *OClientClient) Get(ctx context.Context, id int) (*OClient, error) {
+	return c.Query().Where(oclient.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *OClientClient) GetX(ctx context.Context, id int) *OClient {
+	o, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return o
+}
+
+// QueryUser queries the user edge of a OClient.
+func (c *OClientClient) QueryUser(o *OClient) *UserQuery {
+	query := &UserQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := o.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(oclient.Table, oclient.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, oclient.UserTable, oclient.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *OClientClient) Hooks() []Hook {
+	return c.hooks.OClient
+}
+
 // UserClient is a client for the User schema.
 type UserClient struct {
 	config
@@ -447,6 +558,22 @@ func (c *UserClient) QueryDepartment(u *User) *DepartmentQuery {
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(department.Table, department.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, user.DepartmentTable, user.DepartmentColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryOclients queries the oclients edge of a User.
+func (c *UserClient) QueryOclients(u *User) *OClientQuery {
+	query := &OClientQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(oclient.Table, oclient.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, user.OclientsTable, user.OclientsColumn),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil

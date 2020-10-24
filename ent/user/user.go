@@ -48,6 +48,8 @@ const (
 	EdgeCourse = "course"
 	// EdgeDepartment holds the string denoting the department edge name in mutations.
 	EdgeDepartment = "department"
+	// EdgeOclients holds the string denoting the oclients edge name in mutations.
+	EdgeOclients = "oclients"
 
 	// Table holds the table name of the user in the database.
 	Table = "users"
@@ -65,6 +67,13 @@ const (
 	DepartmentInverseTable = "departments"
 	// DepartmentColumn is the table column denoting the department relation/edge.
 	DepartmentColumn = "department_users"
+	// OclientsTable is the table the holds the oclients relation/edge.
+	OclientsTable = "oclients"
+	// OclientsInverseTable is the table name for the OClient entity.
+	// It exists in this package in order to avoid circular dependency with the "oclient" package.
+	OclientsInverseTable = "oclients"
+	// OclientsColumn is the table column denoting the oclients relation/edge.
+	OclientsColumn = "oclient_user"
 )
 
 // Columns holds all SQL columns for user fields.

@@ -12,6 +12,7 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/prmsrswt/edu-accounts/ent/course"
 	"github.com/prmsrswt/edu-accounts/ent/department"
+	"github.com/prmsrswt/edu-accounts/ent/oclient"
 	"github.com/prmsrswt/edu-accounts/ent/predicate"
 	"github.com/prmsrswt/edu-accounts/ent/user"
 )
@@ -340,6 +341,21 @@ func (uu *UserUpdate) SetDepartment(d *Department) *UserUpdate {
 	return uu.SetDepartmentID(d.ID)
 }
 
+// AddOclientIDs adds the oclients edge to OClient by ids.
+func (uu *UserUpdate) AddOclientIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddOclientIDs(ids...)
+	return uu
+}
+
+// AddOclients adds the oclients edges to OClient.
+func (uu *UserUpdate) AddOclients(o ...*OClient) *UserUpdate {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uu.AddOclientIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -355,6 +371,21 @@ func (uu *UserUpdate) ClearCourse() *UserUpdate {
 func (uu *UserUpdate) ClearDepartment() *UserUpdate {
 	uu.mutation.ClearDepartment()
 	return uu
+}
+
+// RemoveOclientIDs removes the oclients edge to OClient by ids.
+func (uu *UserUpdate) RemoveOclientIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveOclientIDs(ids...)
+	return uu
+}
+
+// RemoveOclients removes oclients edges to OClient.
+func (uu *UserUpdate) RemoveOclients(o ...*OClient) *UserUpdate {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uu.RemoveOclientIDs(ids...)
 }
 
 // Save executes the query and returns the number of rows/vertices matched by this operation.
@@ -678,6 +709,44 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: department.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if nodes := uu.mutation.RemovedOclientsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.OclientsTable,
+			Columns: []string{user.OclientsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: oclient.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.OclientsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.OclientsTable,
+			Columns: []string{user.OclientsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: oclient.FieldID,
 				},
 			},
 		}
@@ -1014,6 +1083,21 @@ func (uuo *UserUpdateOne) SetDepartment(d *Department) *UserUpdateOne {
 	return uuo.SetDepartmentID(d.ID)
 }
 
+// AddOclientIDs adds the oclients edge to OClient by ids.
+func (uuo *UserUpdateOne) AddOclientIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddOclientIDs(ids...)
+	return uuo
+}
+
+// AddOclients adds the oclients edges to OClient.
+func (uuo *UserUpdateOne) AddOclients(o ...*OClient) *UserUpdateOne {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uuo.AddOclientIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -1029,6 +1113,21 @@ func (uuo *UserUpdateOne) ClearCourse() *UserUpdateOne {
 func (uuo *UserUpdateOne) ClearDepartment() *UserUpdateOne {
 	uuo.mutation.ClearDepartment()
 	return uuo
+}
+
+// RemoveOclientIDs removes the oclients edge to OClient by ids.
+func (uuo *UserUpdateOne) RemoveOclientIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveOclientIDs(ids...)
+	return uuo
+}
+
+// RemoveOclients removes oclients edges to OClient.
+func (uuo *UserUpdateOne) RemoveOclients(o ...*OClient) *UserUpdateOne {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uuo.RemoveOclientIDs(ids...)
 }
 
 // Save executes the query and returns the updated entity.
@@ -1350,6 +1449,44 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (u *User, err error) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: department.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if nodes := uuo.mutation.RemovedOclientsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.OclientsTable,
+			Columns: []string{user.OclientsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: oclient.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.OclientsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.OclientsTable,
+			Columns: []string{user.OclientsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: oclient.FieldID,
 				},
 			},
 		}

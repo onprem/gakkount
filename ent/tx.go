@@ -16,6 +16,8 @@ type Tx struct {
 	Course *CourseClient
 	// Department is the client for interacting with the Department builders.
 	Department *DepartmentClient
+	// OClient is the client for interacting with the OClient builders.
+	OClient *OClientClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 
@@ -155,6 +157,7 @@ func (tx *Tx) Client() *Client {
 func (tx *Tx) init() {
 	tx.Course = NewCourseClient(tx.config)
 	tx.Department = NewDepartmentClient(tx.config)
+	tx.OClient = NewOClientClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }
 

@@ -29,6 +29,9 @@ func (a *API) registerAPIRoutes(router *gin.RouterGroup) {
 	adminR.GET("/departments", a.queryAllDepartments)
 	adminR.POST("/department", a.handleNewDepartment)
 	adminR.PATCH("/department", a.handleUpdateDepartment)
+
+	authR.GET("/clients", a.queryClients)
+	authR.POST("/client", a.handleNewClient)
 }
 
 func (a *API) registerOAuthRoutes(router *gin.RouterGroup) {

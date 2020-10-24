@@ -34,6 +34,29 @@ var (
 		PrimaryKey:  []*schema.Column{DepartmentsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{},
 	}
+	// OclientsColumns holds the columns for the "oclients" table.
+	OclientsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "client_id", Type: field.TypeString, Unique: true},
+		{Name: "secret", Type: field.TypeString},
+		{Name: "oclient_user", Type: field.TypeInt, Nullable: true},
+	}
+	// OclientsTable holds the schema information for the "oclients" table.
+	OclientsTable = &schema.Table{
+		Name:       "oclients",
+		Columns:    OclientsColumns,
+		PrimaryKey: []*schema.Column{OclientsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:  "oclients_users_user",
+				Columns: []*schema.Column{OclientsColumns[4]},
+
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -82,11 +105,13 @@ var (
 	Tables = []*schema.Table{
 		CoursesTable,
 		DepartmentsTable,
+		OclientsTable,
 		UsersTable,
 	}
 )
 
 func init() {
+	OclientsTable.ForeignKeys[0].RefTable = UsersTable
 	UsersTable.ForeignKeys[0].RefTable = CoursesTable
 	UsersTable.ForeignKeys[1].RefTable = DepartmentsTable
 }

@@ -12,6 +12,7 @@ import (
 	"github.com/facebook/ent/schema/field"
 	"github.com/prmsrswt/edu-accounts/ent/course"
 	"github.com/prmsrswt/edu-accounts/ent/department"
+	"github.com/prmsrswt/edu-accounts/ent/oclient"
 	"github.com/prmsrswt/edu-accounts/ent/user"
 )
 
@@ -258,6 +259,21 @@ func (uc *UserCreate) SetNillableDepartmentID(id *int) *UserCreate {
 // SetDepartment sets the department edge to Department.
 func (uc *UserCreate) SetDepartment(d *Department) *UserCreate {
 	return uc.SetDepartmentID(d.ID)
+}
+
+// AddOclientIDs adds the oclients edge to OClient by ids.
+func (uc *UserCreate) AddOclientIDs(ids ...int) *UserCreate {
+	uc.mutation.AddOclientIDs(ids...)
+	return uc
+}
+
+// AddOclients adds the oclients edges to OClient.
+func (uc *UserCreate) AddOclients(o ...*OClient) *UserCreate {
+	ids := make([]int, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uc.AddOclientIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -510,6 +526,25 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 				IDSpec: &sqlgraph.FieldSpec{
 					Type:   field.TypeInt,
 					Column: department.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.OclientsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.OclientsTable,
+			Columns: []string{user.OclientsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: oclient.FieldID,
 				},
 			},
 		}

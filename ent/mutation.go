@@ -10,6 +10,7 @@ import (
 
 	"github.com/prmsrswt/edu-accounts/ent/course"
 	"github.com/prmsrswt/edu-accounts/ent/department"
+	"github.com/prmsrswt/edu-accounts/ent/oclient"
 	"github.com/prmsrswt/edu-accounts/ent/user"
 
 	"github.com/facebook/ent"
@@ -26,6 +27,7 @@ const (
 	// Node types.
 	TypeCourse     = "Course"
 	TypeDepartment = "Department"
+	TypeOClient    = "OClient"
 	TypeUser       = "User"
 )
 
@@ -911,6 +913,478 @@ func (m *DepartmentMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Department edge %s", name)
 }
 
+// OClientMutation represents an operation that mutate the OClients
+// nodes in the graph.
+type OClientMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	name          *string
+	clientID      *string
+	secret        *string
+	clearedFields map[string]struct{}
+	user          *int
+	cleareduser   bool
+	done          bool
+	oldValue      func(context.Context) (*OClient, error)
+}
+
+var _ ent.Mutation = (*OClientMutation)(nil)
+
+// oclientOption allows to manage the mutation configuration using functional options.
+type oclientOption func(*OClientMutation)
+
+// newOClientMutation creates new mutation for $n.Name.
+func newOClientMutation(c config, op Op, opts ...oclientOption) *OClientMutation {
+	m := &OClientMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeOClient,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withOClientID sets the id field of the mutation.
+func withOClientID(id int) oclientOption {
+	return func(m *OClientMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *OClient
+		)
+		m.oldValue = func(ctx context.Context) (*OClient, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().OClient.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withOClient sets the old OClient of the mutation.
+func withOClient(node *OClient) oclientOption {
+	return func(m *OClientMutation) {
+		m.oldValue = func(context.Context) (*OClient, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m OClientMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m OClientMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the id value in the mutation. Note that, the id
+// is available only if it was provided to the builder.
+func (m *OClientMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetName sets the name field.
+func (m *OClientMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the name value in the mutation.
+func (m *OClientMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old name value of the OClient.
+// If the OClient object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *OClientMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldName is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName reset all changes of the "name" field.
+func (m *OClientMutation) ResetName() {
+	m.name = nil
+}
+
+// SetClientID sets the clientID field.
+func (m *OClientMutation) SetClientID(s string) {
+	m.clientID = &s
+}
+
+// ClientID returns the clientID value in the mutation.
+func (m *OClientMutation) ClientID() (r string, exists bool) {
+	v := m.clientID
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldClientID returns the old clientID value of the OClient.
+// If the OClient object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *OClientMutation) OldClientID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldClientID is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldClientID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldClientID: %w", err)
+	}
+	return oldValue.ClientID, nil
+}
+
+// ResetClientID reset all changes of the "clientID" field.
+func (m *OClientMutation) ResetClientID() {
+	m.clientID = nil
+}
+
+// SetSecret sets the secret field.
+func (m *OClientMutation) SetSecret(s string) {
+	m.secret = &s
+}
+
+// Secret returns the secret value in the mutation.
+func (m *OClientMutation) Secret() (r string, exists bool) {
+	v := m.secret
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSecret returns the old secret value of the OClient.
+// If the OClient object wasn't provided to the builder, the object is fetched
+// from the database.
+// An error is returned if the mutation operation is not UpdateOne, or database query fails.
+func (m *OClientMutation) OldSecret(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldSecret is allowed only on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldSecret requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSecret: %w", err)
+	}
+	return oldValue.Secret, nil
+}
+
+// ResetSecret reset all changes of the "secret" field.
+func (m *OClientMutation) ResetSecret() {
+	m.secret = nil
+}
+
+// SetUserID sets the user edge to User by id.
+func (m *OClientMutation) SetUserID(id int) {
+	m.user = &id
+}
+
+// ClearUser clears the user edge to User.
+func (m *OClientMutation) ClearUser() {
+	m.cleareduser = true
+}
+
+// UserCleared returns if the edge user was cleared.
+func (m *OClientMutation) UserCleared() bool {
+	return m.cleareduser
+}
+
+// UserID returns the user id in the mutation.
+func (m *OClientMutation) UserID() (id int, exists bool) {
+	if m.user != nil {
+		return *m.user, true
+	}
+	return
+}
+
+// UserIDs returns the user ids in the mutation.
+// Note that ids always returns len(ids) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *OClientMutation) UserIDs() (ids []int) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUser reset all changes of the "user" edge.
+func (m *OClientMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
+}
+
+// Op returns the operation name.
+func (m *OClientMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (OClient).
+func (m *OClientMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during
+// this mutation. Note that, in order to get all numeric
+// fields that were in/decremented, call AddedFields().
+func (m *OClientMutation) Fields() []string {
+	fields := make([]string, 0, 3)
+	if m.name != nil {
+		fields = append(fields, oclient.FieldName)
+	}
+	if m.clientID != nil {
+		fields = append(fields, oclient.FieldClientID)
+	}
+	if m.secret != nil {
+		fields = append(fields, oclient.FieldSecret)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name.
+// The second boolean value indicates that this field was
+// not set, or was not define in the schema.
+func (m *OClientMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case oclient.FieldName:
+		return m.Name()
+	case oclient.FieldClientID:
+		return m.ClientID()
+	case oclient.FieldSecret:
+		return m.Secret()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database.
+// An error is returned if the mutation operation is not UpdateOne,
+// or the query to the database was failed.
+func (m *OClientMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case oclient.FieldName:
+		return m.OldName(ctx)
+	case oclient.FieldClientID:
+		return m.OldClientID(ctx)
+	case oclient.FieldSecret:
+		return m.OldSecret(ctx)
+	}
+	return nil, fmt.Errorf("unknown OClient field %s", name)
+}
+
+// SetField sets the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *OClientMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case oclient.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case oclient.FieldClientID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetClientID(v)
+		return nil
+	case oclient.FieldSecret:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSecret(v)
+		return nil
+	}
+	return fmt.Errorf("unknown OClient field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented
+// or decremented during this mutation.
+func (m *OClientMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was in/decremented
+// from a field with the given name. The second value indicates
+// that this field was not set, or was not define in the schema.
+func (m *OClientMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value for the given name. It returns an
+// error if the field is not defined in the schema, or if the
+// type mismatch the field type.
+func (m *OClientMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown OClient numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared
+// during this mutation.
+func (m *OClientMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicates if this field was
+// cleared in this mutation.
+func (m *OClientMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value for the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *OClientMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown OClient nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation regarding the
+// given field name. It returns an error if the field is not
+// defined in the schema.
+func (m *OClientMutation) ResetField(name string) error {
+	switch name {
+	case oclient.FieldName:
+		m.ResetName()
+		return nil
+	case oclient.FieldClientID:
+		m.ResetClientID()
+		return nil
+	case oclient.FieldSecret:
+		m.ResetSecret()
+		return nil
+	}
+	return fmt.Errorf("unknown OClient field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this
+// mutation.
+func (m *OClientMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.user != nil {
+		edges = append(edges, oclient.EdgeUser)
+	}
+	return edges
+}
+
+// AddedIDs returns all ids (to other nodes) that were added for
+// the given edge name.
+func (m *OClientMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case oclient.EdgeUser:
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this
+// mutation.
+func (m *OClientMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all ids (to other nodes) that were removed for
+// the given edge name.
+func (m *OClientMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this
+// mutation.
+func (m *OClientMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.cleareduser {
+		edges = append(edges, oclient.EdgeUser)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean indicates if this edge was
+// cleared in this mutation.
+func (m *OClientMutation) EdgeCleared(name string) bool {
+	switch name {
+	case oclient.EdgeUser:
+		return m.cleareduser
+	}
+	return false
+}
+
+// ClearEdge clears the value for the given name. It returns an
+// error if the edge name is not defined in the schema.
+func (m *OClientMutation) ClearEdge(name string) error {
+	switch name {
+	case oclient.EdgeUser:
+		m.ClearUser()
+		return nil
+	}
+	return fmt.Errorf("unknown OClient unique edge %s", name)
+}
+
+// ResetEdge resets all changes in the mutation regarding the
+// given edge name. It returns an error if the edge is not
+// defined in the schema.
+func (m *OClientMutation) ResetEdge(name string) error {
+	switch name {
+	case oclient.EdgeUser:
+		m.ResetUser()
+		return nil
+	}
+	return fmt.Errorf("unknown OClient edge %s", name)
+}
+
 // UserMutation represents an operation that mutate the Users
 // nodes in the graph.
 type UserMutation struct {
@@ -939,6 +1413,8 @@ type UserMutation struct {
 	clearedcourse     bool
 	department        *int
 	cleareddepartment bool
+	oclients          map[int]struct{}
+	removedoclients   map[int]struct{}
 	done              bool
 	oldValue          func(context.Context) (*User, error)
 }
@@ -1848,6 +2324,48 @@ func (m *UserMutation) ResetDepartment() {
 	m.cleareddepartment = false
 }
 
+// AddOclientIDs adds the oclients edge to OClient by ids.
+func (m *UserMutation) AddOclientIDs(ids ...int) {
+	if m.oclients == nil {
+		m.oclients = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.oclients[ids[i]] = struct{}{}
+	}
+}
+
+// RemoveOclientIDs removes the oclients edge to OClient by ids.
+func (m *UserMutation) RemoveOclientIDs(ids ...int) {
+	if m.removedoclients == nil {
+		m.removedoclients = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.removedoclients[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedOclients returns the removed ids of oclients.
+func (m *UserMutation) RemovedOclientsIDs() (ids []int) {
+	for id := range m.removedoclients {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// OclientsIDs returns the oclients ids in the mutation.
+func (m *UserMutation) OclientsIDs() (ids []int) {
+	for id := range m.oclients {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetOclients reset all changes of the "oclients" edge.
+func (m *UserMutation) ResetOclients() {
+	m.oclients = nil
+	m.removedoclients = nil
+}
+
 // Op returns the operation name.
 func (m *UserMutation) Op() Op {
 	return m.op
@@ -2293,12 +2811,15 @@ func (m *UserMutation) ResetField(name string) error {
 // AddedEdges returns all edge names that were set/added in this
 // mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.course != nil {
 		edges = append(edges, user.EdgeCourse)
 	}
 	if m.department != nil {
 		edges = append(edges, user.EdgeDepartment)
+	}
+	if m.oclients != nil {
+		edges = append(edges, user.EdgeOclients)
 	}
 	return edges
 }
@@ -2315,6 +2836,12 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 		if id := m.department; id != nil {
 			return []ent.Value{*id}
 		}
+	case user.EdgeOclients:
+		ids := make([]ent.Value, 0, len(m.oclients))
+		for id := range m.oclients {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -2322,7 +2849,10 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this
 // mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
+	if m.removedoclients != nil {
+		edges = append(edges, user.EdgeOclients)
+	}
 	return edges
 }
 
@@ -2330,6 +2860,12 @@ func (m *UserMutation) RemovedEdges() []string {
 // the given edge name.
 func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
+	case user.EdgeOclients:
+		ids := make([]ent.Value, 0, len(m.removedoclients))
+		for id := range m.removedoclients {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
@@ -2337,7 +2873,7 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 // ClearedEdges returns all edge names that were cleared in this
 // mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.clearedcourse {
 		edges = append(edges, user.EdgeCourse)
 	}
@@ -2383,6 +2919,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeDepartment:
 		m.ResetDepartment()
+		return nil
+	case user.EdgeOclients:
+		m.ResetOclients()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)

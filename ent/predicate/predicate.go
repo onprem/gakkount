@@ -12,5 +12,8 @@ type Course func(*sql.Selector)
 // Department is the predicate function for department builders.
 type Department func(*sql.Selector)
 
+// OClient is the predicate function for oclient builders.
+type OClient func(*sql.Selector)
+
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

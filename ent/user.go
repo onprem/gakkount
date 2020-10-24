@@ -63,9 +63,11 @@ type UserEdges struct {
 	Course *Course
 	// Department holds the value of the department edge.
 	Department *Department
+	// Oclients holds the value of the oclients edge.
+	Oclients []*OClient
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // CourseOrErr returns the Course value or an error if the edge
@@ -94,6 +96,15 @@ func (e UserEdges) DepartmentOrErr() (*Department, error) {
 		return e.Department, nil
 	}
 	return nil, &NotLoadedError{edge: "department"}
+}
+
+// OclientsOrErr returns the Oclients value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) OclientsOrErr() ([]*OClient, error) {
+	if e.loadedTypes[2] {
+		return e.Oclients, nil
+	}
+	return nil, &NotLoadedError{edge: "oclients"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -245,6 +256,11 @@ func (u *User) QueryCourse() *CourseQuery {
 // QueryDepartment queries the department edge of the User.
 func (u *User) QueryDepartment() *DepartmentQuery {
 	return (&UserClient{config: u.config}).QueryDepartment(u)
+}
+
+// QueryOclients queries the oclients edge of the User.
+func (u *User) QueryOclients() *OClientQuery {
+	return (&UserClient{config: u.config}).QueryOclients(u)
 }
 
 // Update returns a builder for updating this User.

@@ -26,6 +26,7 @@ type config struct {
 type hooks struct {
 	Course     []ent.Hook
 	Department []ent.Hook
+	OClient    []ent.Hook
 	User       []ent.Hook
 }
 
