@@ -6,7 +6,6 @@ export type LabelProps = { value: string } & React.DetailedHTMLProps<
   HTMLLabelElement
 >;
 export const Label: React.FC<LabelProps> = ({ value, children, ...rest }) => {
-  console.log({});
   return (
     <label {...rest} className={styles.label}>
       <span className={styles.labelSpan}>{value}</span>

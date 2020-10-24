@@ -7,9 +7,9 @@ import { AuthContext } from "./contexts/auth";
 import fetcher from "./utils/fetcher";
 import { User } from "./interfaces";
 
-import { OAuthLogin, Consent, Profile, Login, Users } from "./pages";
+import { OAuthLogin, Consent, Profile, Login, Users, Logout } from "./pages";
 import ProtectedRoute from "./components/protectedRoute";
-import Nav from "./components/nav";
+// import Nav from "./components/nav";
 
 import "./App.css";
 
@@ -39,7 +39,7 @@ function App() {
         }}
       >
         <div className="App">
-          <Nav />
+          {/* <Nav /> */}
           <Switch>
             <Route exact path="/">
               <header className="App-header">
@@ -60,12 +60,15 @@ function App() {
                 <code>Hello, {user?.name} </code>
               </header>
             </ProtectedRoute>
-            <ProtectedRoute path="/profile">
+            <ProtectedRoute exact path="/profile">
               <Profile />
             </ProtectedRoute>
             <ProtectedRoute path="/admin">
               <Users />
             </ProtectedRoute>
+            <Route path="/logout">
+              <Logout />
+            </Route>
           </Switch>
         </div>
       </SWRConfig>

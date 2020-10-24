@@ -3,17 +3,16 @@ import React from "react";
 import styles from "./style.module.css";
 
 export type TextProps = {
-  inpRef:
+  inpRef?:
     | string
     | ((instance: HTMLInputElement | null) => void)
     | React.RefObject<HTMLInputElement>
     | null
     | undefined;
-  type: "text" | "number" | "password";
+  type?: "text" | "number" | "password";
 } & React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
 
-export const Text: React.FC<TextProps> = ({ inpRef, type, className, ...rest }) => {
-  console.log({ inpRef });
+export const Text: React.FC<TextProps> = ({ inpRef, type = "text", className, ...rest }) => {
   return <input {...rest} ref={inpRef} type={type} className={`${styles.text} ${className}`} />;
 };
 

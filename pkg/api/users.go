@@ -105,7 +105,7 @@ func (a *API) handleSelfUpdate(c *gin.Context) {
 	var i struct {
 		Photo    string `json:"photo" binding:"omitempty,url"`
 		AltEmail string `json:"altEmail" binding:"omitempty,email"`
-		Phone    string `json:"phone" binding:"-"`
+		Phone    string `json:"phone"`
 		// social
 		LinkedIn string `json:"linkedin" binding:"omitempty,url"`
 		Twitter  string `json:"twitter" binding:"omitempty,url"`
@@ -197,7 +197,8 @@ func (a *API) handleNewUser(c *gin.Context) {
 		SetLinkedin(i.LinkedIn).
 		SetTwitter(i.Twitter).
 		SetFacebook(i.Facebook).
-		SetGithub(i.Github)
+		SetGithub(i.Github).
+		SetSalutation(i.Salutation)
 
 	switch role {
 	case user.RoleStudent:
@@ -207,8 +208,6 @@ func (a *API) handleNewUser(c *gin.Context) {
 			return
 		}
 		x.SetRollNo(i.RollNo).SetAdmissionTime(i.AdmissionTime).SetCourseEndTime(i.CourseEndTime)
-	case user.RoleFaculty:
-		x.SetSalutation(i.Salutation)
 	case user.RoleStaff:
 		x.SetDesignation(i.Designation)
 	}

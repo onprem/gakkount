@@ -4,6 +4,7 @@ import useSWR from "swr";
 import Button from "../../components/button";
 import styles from "./consent.module.css";
 import useSWRPost from "../../hooks/useSWRPost";
+import logoImg from "../../assets/logo.png";
 import { ReactComponent as LoadingIcon } from "../../assets/three-dots.svg";
 
 const useConsentChallenge = (cc: string) => {
@@ -52,20 +53,27 @@ export const Consent: React.FC = () => {
   console.log("concent", consent, client);
   return (
     <div className={styles.container}>
+      <div className={styles.logoDiv}>
+        <img src={logoImg} alt="logo" className={styles.mainLogo} />
+        <h1 className={styles.title}>Account Login</h1>
+      </div>
       <main className={styles.main}>
+        <hr className={styles.hr} />
         {client.logo_uri && <img src={client.logo_uri} alt="client logo" className={styles.logo} />}
-        <p>
-          Hi {user}, <b>{client.client_name || client.client_id}</b> wants to access your account.
+        <p className={styles.center}>
+          Hi {user}, <b>{client.client_name || client.client_id}</b> wants to access your IIITM
+          account.
         </p>
         <p>
           This will allow <b>{client.client_name || client.client_id}</b> to:
         </p>
         <ul className={styles.list}>
+          <li>View your name and photo</li>
           <li>Associate you with your personal info on IIITM Accounts</li>
           <li>See your personal info, including details like your roll no. and course</li>
-          <li>View your email address</li>
+          <li>View your personal and contact details</li>
         </ul>
-        <hr />
+        {/* <hr className={styles.hr} /> */}
         <div className={styles.btnGroup}>
           <Button
             type="button"
@@ -75,7 +83,12 @@ export const Consent: React.FC = () => {
           >
             Deny
           </Button>
-          <Button type="button" disabled={isValidating} onClick={() => handleSubmit(true)}>
+          <Button
+            type="button"
+            disabled={isValidating}
+            onClick={() => handleSubmit(true)}
+            style={{ background: "var(--color-brand)" }}
+          >
             {isValidating ? <LoadingIcon style={{ height: "1em" }} /> : `Allow`}
           </Button>
         </div>

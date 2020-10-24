@@ -11,6 +11,12 @@ export interface User {
   admissionTime?: string;
   courseEndTime?: string;
 
+  // social handles
+  linkedin?: string;
+  facebook?: string;
+  github?: string;
+  twitter?: string;
+
   edges: UserEdges;
 }
 

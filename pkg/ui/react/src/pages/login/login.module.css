@@ -2,18 +2,47 @@
   width: 100%;
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+.logoDiv {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo {
+  width: 4rem;
+  margin-right: 2rem;
 }
 
 .form {
   display: flex;
   flex-direction: column;
   width: 90%;
-  max-width: 500px;
+  max-width: 600px;
   font-size: 1.2em;
   box-sizing: border-box;
-  padding: 4em 2em;
-  background-color: #f1f1f1;
+  padding: 2rem;
   border-radius: 1em;
+}
+
+.form > p {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.form > hr {
+  width: 100%;
+  color: var(--color-bg-light);
+  margin: 1.2rem 0rem;
+}
+
+.link {
+  color: var(--color-brand);
+  text-decoration: underline;
 }

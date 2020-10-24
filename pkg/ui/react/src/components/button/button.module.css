@@ -1,15 +1,15 @@
 .button {
   box-sizing: border-box;
-  padding: 0.5em 1em;
+  padding: 1rem;
   background: #111111;
   color: white;
   border: none;
-  border-radius: 0.5em;
+  border-radius: 0.3em;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   font-weight: 500;
   font-size: 1em;
-  margin: 0.8em;
+  margin: 0.8rem 0;
   cursor: pointer;
   transition: all 0.1s ease-in;
 }

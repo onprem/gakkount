@@ -2,19 +2,31 @@
   width: 100%;
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+.logoDiv {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mainLogo {
+  width: 3rem;
+  margin-right: 2rem;
 }
 
 .main {
   display: flex;
   flex-direction: column;
   width: 90%;
-  max-width: 550px;
+  max-width: 600px;
   font-size: 1.2em;
   box-sizing: border-box;
-  padding: 3em 2em;
-  background-color: #f1f1f1;
+  padding: 2rem;
   border-radius: 1em;
   align-items: center;
 }
@@ -29,8 +41,16 @@
   background: white;
 }
 
+.main > p {
+  width: 100%;
+}
+
+.center {
+  text-align: center;
+}
+
 .list {
-  width: 80%;
+  width: 90%;
 }
 
 .btnGroup {
@@ -40,4 +60,10 @@
   padding: 1em;
   justify-content: space-between;
   align-items: center;
+}
+
+.hr {
+  width: 100%;
+  color: var(--color-bg-light);
+  margin: 1.2rem 0rem;
 }

@@ -2,11 +2,12 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
-import styles from "./login.module.css";
+import styles from "../login/login.module.css";
 import { Text, Label } from "../../components/form";
 import Button from "../../components/button";
 import useSWRPost from "../../hooks/useSWRPost";
 import { ReactComponent as LoadingIcon } from "../../assets/three-dots.svg";
+import logoImg from "../../assets/logo.png";
 import { useAuth } from "../../contexts/auth";
 
 export const OAuthLogin: React.FC = () => {
@@ -32,12 +33,17 @@ export const OAuthLogin: React.FC = () => {
 
   return (
     <div className={styles.container}>
+      <div className={styles.logoDiv}>
+        <img src={logoImg} alt="logo" className={styles.logo} />
+        <h1 className={styles.title}>Account Login</h1>
+      </div>
       <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-        <h2>Login to continue</h2>
+        <p>Enter email address and password to continue</p>
         <Label value="Email">
           <Text
             type="text"
             name="email"
+            placeholder="Enter e-mail address"
             inpRef={register({ required: "Email is required" })}
             defaultValue={isLoggedIn ? user?.email : ""}
           />
@@ -46,6 +52,7 @@ export const OAuthLogin: React.FC = () => {
           <Text
             type="password"
             name="password"
+            placeholder="Enter password"
             inpRef={register({ required: "Password is required" })}
           />
         </Label>
@@ -57,9 +64,16 @@ export const OAuthLogin: React.FC = () => {
             ref={register({ required: "Login challenge is required" })}
           />
         )}
-        <Button type="submit" disabled={isValidating}>
+        <Button type="submit" disabled={isValidating} style={{ background: "var(--color-brand)" }}>
           {isValidating ? <LoadingIcon style={{ height: "1em" }} /> : `Log In`}
         </Button>
+        <hr />
+        <p>
+          Don't have an account?{" "}
+          <a href="mailto:admin@iiitm.ac.in" className={styles.link}>
+            Contact Admin
+          </a>
+        </p>
       </form>
     </div>
   );

@@ -3,11 +3,12 @@ import useSWR, { ConfigInterface, responseInterface } from "swr";
 
 const useSWRPost = <S>(
   endpoint: RequestInfo,
-  swrOpts: ConfigInterface
+  swrOpts: ConfigInterface,
+  method: string = "POST"
 ): [Dispatch<SetStateAction<S | undefined>>, responseInterface<any, any>] => {
   const [values, runFetch] = useState<S>();
 
-  const swrOut = useSWR(values ? [endpoint, "POST", values] : null, {
+  const swrOut = useSWR(values ? [endpoint, method, values] : null, {
     revalidateOnFocus: false,
     ...swrOpts,
   });
