@@ -2,7 +2,7 @@ import React from "react";
 import { useAuth } from "../../contexts/auth";
 import logoImg from "../../assets/logo.png";
 import styles from "./style.module.css";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 const Nav: React.FC = () => {
   const { user } = useAuth();
@@ -24,6 +24,9 @@ const Nav: React.FC = () => {
               alt="user"
             />
             <h4 className={styles.navName}>{user.name}</h4>
+            <div className={styles.dropdown}>
+              <Link to="/logout">Logout</Link>
+            </div>
           </>
         )}
       </div>
@@ -32,6 +35,7 @@ const Nav: React.FC = () => {
 };
 
 export const Layout: React.FC = ({ children }) => {
+  const { user } = useAuth();
   return (
     <div className={styles.container}>
       <Nav />
@@ -43,6 +47,20 @@ export const Layout: React.FC = ({ children }) => {
           <NavLink activeClassName={styles.active} to="/profile/clients">
             OAuth Clients
           </NavLink>
+          {user?.role === "admin" && (
+            <>
+              <hr />
+              <NavLink activeClassName={styles.active} to="/admin/users">
+                All Users
+              </NavLink>
+              <NavLink activeClassName={styles.active} to="/admin/clients">
+                All OAuth Clients
+              </NavLink>
+              <NavLink activeClassName={styles.active} to="/admin/courses">
+                Courses
+              </NavLink>
+            </>
+          )}
         </nav>
         <div className={styles.content}>{children}</div>
       </section>

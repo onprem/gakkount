@@ -29,11 +29,37 @@
 }
 
 .accountDiv {
-  padding: 0.8rem 2rem;
+  position: relative;
+  padding: 0.8rem 4rem;
   border-left: solid 2px var(--color-bg-light);
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.dropdown {
+  height: 0rem;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  left: 5%;
+  bottom: -4rem;
+  width: 90%;
+  box-sizing: border-box;
+  padding: 0rem;
+  background: var(--color-bg-light);
+  border-radius: 0.5rem;
+  transition: opacity 0.2s ease-out;
+}
+
+.dropdown > a {
+  font-weight: 500;
+}
+
+.accountDiv:hover > .dropdown {
+  opacity: 1;
+  height: unset;
+  padding: 1.5rem;
 }
 
 .navPhoto {
@@ -75,6 +101,12 @@
 a.active {
   border-left-color: var(--color-hero);
   background: var(--color-hero-t);
+}
+
+.sidebar > hr {
+  border: solid 1px var(--color-hero-t);
+  width: 80%;
+  margin: 1rem auto;
 }
 
 .content {

@@ -177,9 +177,13 @@ interface Response {
   clients?: ExtClient[];
 }
 
-const Profile = () => {
+export interface ClientsProps {
+  all?: boolean;
+}
+
+const Clients: React.FC<ClientsProps> = ({ all = false }) => {
   const [client, setClient] = useState<ExtClient>();
-  const { data, isValidating } = useSWR<Response>("/api/clients");
+  const { data, isValidating } = useSWR<Response>(`/api/clients?all=${all ? "true" : "false"}`);
 
   if (isValidating || data?.error)
     return (
@@ -190,13 +194,11 @@ const Profile = () => {
       </Layout>
     );
 
-  console.log(data);
-
   return (
     <Layout>
       <main className={styles.main}>
         <section className={styles.left}>
-          <h1>OAuth Clients</h1>
+          <h1>{all ? `All OAuth Clients` : `OAuth Clients`}</h1>
           <AddClient />
           <div className={styles.cards}>
             {data?.clients?.map((e) => (
@@ -232,6 +234,13 @@ const Profile = () => {
               <Label value="Client Secret">
                 <Text value={client.client.secret} readOnly />
               </Label>
+              {client.client.edges?.User && (
+                <>
+                  <Label value="User">
+                    <Text value={client.client.edges.User.name} readOnly />
+                  </Label>
+                </>
+              )}
             </>
           ) : (
             <div className={styles.empty}>
@@ -245,4 +254,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default Clients;

@@ -19,6 +19,7 @@
   box-sizing: border-box;
   padding: 2rem;
   border-right: solid 2px #bfbfbf;
+  min-height: calc(100vh - 8rem);
 }
 
 .left > h1 {
@@ -28,11 +29,9 @@
 
 .cards {
   width: 100%;
-  min-height: 60vh;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  /* align-items: center; */
 }
 
 .client {

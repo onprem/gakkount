@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import useSWR from "swr";
 import { Select } from "../../../components/form";
+import Layout from "../../../components/layout";
 
 import { User } from "../../../interfaces";
 import styles from "./users.module.css";
@@ -37,27 +38,30 @@ const Users = () => {
   const list = data?.users.map((u) => <UserRow user={u} key={u.id} />);
 
   return (
-    <div className={styles.main}>
-      <h1 className={styles.head}>All Users</h1>
-      <div className={styles.options}>
-        <Select onChange={(e) => setRole(e.target.value as User["role"])} value={role}>
-          <option value="student">Student</option>
-          <option value="faculty">Faculty</option>
-          <option value="staff">Staff</option>
-          <option value="admin">Admin</option>
-        </Select>
-      </div>
-      <div className={styles.list}>
-        <div className={`${styles.user} ${styles.topUser}`}>
-          <span className={styles.idSpan}>ID</span>
-          <span className={styles.nameSpan}>Name</span>
-          <span className={styles.emailSpan}>Email</span>
-          <span className={styles.rollSpan}>RollNo.</span>
-          <span className={styles.courseSpan}>Course</span>
+    <Layout>
+      <div className={styles.main}>
+        <h1 className={styles.head}>All Users</h1>
+        <div className={styles.options}>
+          <Select onChange={(e) => setRole(e.target.value as User["role"])} value={role}>
+            <option value="student">Student</option>
+            <option value="faculty">Faculty</option>
+            <option value="staff">Staff</option>
+            <option value="admin">Admin</option>
+            <option value="misc">Misc.</option>
+          </Select>
         </div>
-        {list}
+        <div className={styles.list}>
+          <div className={`${styles.user} ${styles.topUser}`}>
+            <span className={styles.idSpan}>ID</span>
+            <span className={styles.nameSpan}>Name</span>
+            <span className={styles.emailSpan}>Email</span>
+            <span className={styles.rollSpan}>RollNo.</span>
+            <span className={styles.courseSpan}>Course</span>
+          </div>
+          {list}
+        </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 

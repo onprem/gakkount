@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 import cookie from "js-cookie";
 import { SWRConfig } from "swr";
 
@@ -7,7 +7,7 @@ import { AuthContext } from "./contexts/auth";
 import fetcher from "./utils/fetcher";
 import { User } from "./interfaces";
 
-import { OAuthLogin, Consent, Profile, Login, Users, Logout, Clients } from "./pages";
+import { OAuthLogin, Consent, Profile, Login, Users, Logout, Clients, Courses } from "./pages";
 import ProtectedRoute from "./components/protectedRoute";
 // import Nav from "./components/nav";
 
@@ -42,9 +42,7 @@ function App() {
           {/* <Nav /> */}
           <Switch>
             <Route exact path="/">
-              <header className="App-header">
-                <code>IIITM Accounts</code>
-              </header>
+              <Redirect to="/login" />
             </Route>
             <Route exact path="/oauth/login">
               <OAuthLogin />
@@ -66,8 +64,14 @@ function App() {
             <ProtectedRoute exact path="/profile/clients">
               <Clients />
             </ProtectedRoute>
-            <ProtectedRoute path="/admin">
+            <ProtectedRoute path="/admin/users">
               <Users />
+            </ProtectedRoute>
+            <ProtectedRoute exact path="/admin/clients">
+              <Clients all />
+            </ProtectedRoute>
+            <ProtectedRoute exact path="/admin/courses">
+              <Courses />
             </ProtectedRoute>
             <Route path="/logout">
               <Logout />
