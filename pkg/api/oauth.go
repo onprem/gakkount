@@ -120,8 +120,7 @@ func (a *API) acceptConsent(challenge string, payload *hydraModels.ConsentReques
 			WithConsentChallenge(challenge).WithBody(&hydraModels.AcceptConsentRequest{
 			GrantScope:               payload.RequestedScope,
 			GrantAccessTokenAudience: payload.RequestedAccessTokenAudience,
-			Remember:                 true,
-			RememberFor:              0,
+			Remember:                 false,
 			Session: &hydraModels.ConsentRequestSession{
 				IDToken: idTkn,
 			},
