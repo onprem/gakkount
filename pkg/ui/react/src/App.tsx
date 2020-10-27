@@ -6,10 +6,19 @@ import { SWRConfig } from "swr";
 import { AuthContext } from "./contexts/auth";
 import fetcher from "./utils/fetcher";
 import { User } from "./interfaces";
-
-import { OAuthLogin, Consent, Profile, Login, Users, Logout, Clients, Courses } from "./pages";
 import ProtectedRoute from "./components/protectedRoute";
-// import Nav from "./components/nav";
+
+import {
+  OAuthLogin,
+  Consent,
+  Profile,
+  Login,
+  Users,
+  Logout,
+  Clients,
+  Courses,
+  Setup,
+} from "./pages";
 
 import "./App.css";
 
@@ -73,6 +82,9 @@ function App() {
             <ProtectedRoute exact path="/admin/courses">
               <Courses />
             </ProtectedRoute>
+            <Route path="/setup">
+              <Setup />
+            </Route>
             <Route path="/logout">
               <Logout />
             </Route>

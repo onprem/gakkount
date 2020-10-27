@@ -16,10 +16,13 @@ func (a *API) registerAPIRoutes(router *gin.RouterGroup) {
 	router.GET("/ping", func(c *gin.Context) { c.JSON(http.StatusOK, gin.H{"message": "pong"}) })
 	router.POST("/login", a.handleUserLogin)
 	router.GET("/logout", a.handleUserLogout)
+
 	adminR.GET("/users", a.queryAllUsers)
 	adminR.POST("/user", a.handleNewUser)
 	authR.GET("/user", a.queryUser)
 	authR.PATCH("/user", a.handleSelfUpdate)
+
+	router.POST("/setup", a.handleSetup)
 	adminR.GET("/dummy", a.createDummy)
 
 	adminR.GET("/courses", a.queryAllCourses)
