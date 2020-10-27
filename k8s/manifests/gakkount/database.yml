@@ -1,0 +1,20 @@
+apiVersion: kubedb.com/v1alpha1
+kind: Postgres
+metadata:
+  name: postgres
+spec:
+  version: "11.2"
+  databaseSecret:
+    secretName: postgres-auth
+  podTemplate:
+    spec:
+      env:
+        - name: POSTGRES_DB
+          value: gakkount
+  storage:
+    storageClassName: "standard"
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi

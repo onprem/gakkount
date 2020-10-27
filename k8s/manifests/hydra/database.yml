@@ -1,0 +1,20 @@
+apiVersion: kubedb.com/v1alpha1
+kind: Postgres
+metadata:
+  name: postgres-hydra
+spec:
+  version: "11.2"
+  databaseSecret:
+    secretName: postgres-hydra-auth
+  podTemplate:
+    spec:
+      env:
+        - name: POSTGRES_DB
+          value: hydra
+  storage:
+    storageClassName: "standard"
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi

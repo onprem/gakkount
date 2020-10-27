@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hydra
+  labels:
+    app: hydra
+spec:
+  ports:
+    - name: http-public
+      port: 4444
+      targetPort: 4444
+      protocol: TCP
+    - name: http-admin
+      port: 4445
+      targetPort: 4445
+      protocol: TCP
+  selector:
+    component: hydra

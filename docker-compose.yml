@@ -15,8 +15,8 @@ services:
       - URLS_LOGOUT=http://127.0.0.1:8080/oauth/logout
       - DSN=postgres://hydra:secret@hpostgresd:5432/hydra?sslmode=disable&max_conns=20&max_idle_conns=4
       - SECRETS_SYSTEM=youReallyNeedToChangeThis-No
-      - OIDC_SUBJECT_IDENTIFIERS_SUPPORTED_TYPES=public,pairwise
-      - OIDC_SUBJECT_IDENTIFIERS_PAIRWISE_SALT=youReallyNeedToChangeThis-OkayButNo
+      # - OIDC_SUBJECT_IDENTIFIERS_SUPPORTED_TYPES=public,pairwise
+      # - OIDC_SUBJECT_IDENTIFIERS_PAIRWISE_SALT=youReallyNeedToChangeThis-OkayButNo
       - SERVE_COOKIES_SAME_SITE_MODE=Lax
     restart: unless-stopped
     depends_on:

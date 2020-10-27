@@ -18,7 +18,9 @@ import (
 )
 
 func main() {
-	client, err := ent.Open("postgres", "postgresql://edu:secret@127.0.0.1:5432/edu?sslmode=disable")
+	conf := getConfig()
+
+	client, err := ent.Open("postgres", conf.dsn)
 	if err != nil {
 		log.Fatalf("failed opening connection to database: %v", err)
 	}
@@ -28,7 +30,7 @@ func main() {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
-	api := api.NewAPI(client, "http://localhost:4445")
+	api := api.NewAPI(client, conf.hydraAdminURL)
 	router := gin.Default()
 
 	router.NoRoute(ui.ServeUI)

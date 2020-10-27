@@ -1,0 +1,9 @@
+build
+k8s
+.vscode
+.gitlab-ci.yml
+
+# Docker volumes
+docker/*
+
+pkg/ui/react

@@ -155,7 +155,7 @@ func (a *API) handleConsent(c *gin.Context) {
 
 func (a *API) handleConsentPost(c *gin.Context) {
 	var input struct {
-		Allow     bool   `json:"allow" binding:"required"`
+		Allow     bool   `json:"allow"`
 		Challenge string `json:"challenge" binding:"required"`
 	}
 

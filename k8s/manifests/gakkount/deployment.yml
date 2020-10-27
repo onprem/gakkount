@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gakkount
+  labels:
+    app: gakkount
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: gakkount
+  template:
+    metadata:
+      labels:
+        component: gakkount
+    spec:
+      containers:
+        - name: gakkount
+          image: prmsrswt/gakkount:1.0.0
+          env:
+            - name: GIN_MODE
+              value: release
+            - name: HYDRA_ADMIN_URL
+              value: http://hydra:4445
+            - name: DSN
+              valueFrom:
+                secretKeyRef:
+                  name: gakkount-secret
+                  key: dsn
+          ports:
+            - containerPort: 8080

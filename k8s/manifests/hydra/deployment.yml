@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hydra
+  labels:
+    app: hydra
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: hydra
+  template:
+    metadata:
+      labels:
+        component: hydra
+    spec:
+      containers:
+        - name: hydra
+          image: oryd/hydra:v1.7.4
+          command: ["hydra"]
+          args:
+            - "serve"
+            - "all"
+            - "--dangerous-force-http"
+          env:
+            - name: URLS_SELF_ISSUER
+              value: https://auth.onprem.dev
+            - name: URLS_CONSENT
+              value: https://accounts.onprem.dev/oauth/consent
+            - name: URLS_LOGIN
+              value: https://accounts.onprem.dev/oauth/login
+            - name: URLS_LOGOUT
+              value: https://accounts.onprem.dev/oauth/logout
+            - name: DSN
+              valueFrom:
+                secretKeyRef:
+                  name: hydra-secret
+                  key: dsn
+            - name: SECRETS_SYSTEM
+              valueFrom:
+                secretKeyRef:
+                  name: hydra-secret
+                  key: secretsSystem
+          ports:
+            - name: http-public
+              containerPort: 4444
+            - name: http-admin
+              containerPort: 4445
+      initContainers:
+        - name: hydra-automigrate
+          image: oryd/hydra:v1.7.4
+          command: ["hydra"]
+          args: ["migrate", "sql", "-e", "--yes"]
+          env:
+            - name: DSN
+              valueFrom:
+                secretKeyRef:
+                  name: hydra-secret
+                  key: dsn
