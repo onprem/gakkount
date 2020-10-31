@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: gakkount
-          image: prmsrswt/gakkount:1.0.0
+          image: prmsrswt/gakkount:1.2.0
           env:
             - name: GIN_MODE
               value: release

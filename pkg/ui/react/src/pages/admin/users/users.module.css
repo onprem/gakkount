@@ -65,3 +65,19 @@
 .courseSpan {
   width: 20%;
 }
+
+@media only screen and (max-width: 500px) {
+  .options {
+    justify-content: flex-start;
+  }
+  .rollSpan,
+  .courseSpan {
+    display: none;
+  }
+  .nameSpan {
+    width: 40%;
+  }
+  .emailSpan {
+    width: 50%;
+  }
+}

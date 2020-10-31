@@ -61,3 +61,18 @@
 .semSpan {
   width: 15%;
 }
+
+@media only screen and (max-width: 500px) {
+  .options {
+    justify-content: flex-start;
+  }
+  .semSpan {
+    display: none;
+  }
+  .nameSpan {
+    width: 75%;
+  }
+  .codeSpan {
+    width: 15%;
+  }
+}
