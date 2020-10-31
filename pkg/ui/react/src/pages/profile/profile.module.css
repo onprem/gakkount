@@ -1,6 +1,7 @@
 .main {
   width: 100%;
   display: flex;
+  flex-wrap: wrap;
   --width: 70%;
 }
 
@@ -49,4 +50,18 @@
 }
 
 @media only screen and (max-width: 500px) {
+  .content {
+    width: 100%;
+  }
+  .aside {
+    width: 100%;
+    padding: 1rem 2rem;
+  }
+  .content label {
+    margin: 0.5rem 0rem;
+  }
+  .group {
+    flex-direction: column;
+    margin: 0.5rem 0rem;
+  }
 }
