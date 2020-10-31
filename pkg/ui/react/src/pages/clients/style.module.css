@@ -130,3 +130,33 @@
   margin: 1rem;
   padding: 1rem 2.5rem;
 }
+
+@media only screen and (max-width: 500px) {
+  .main {
+    flex-direction: column-reverse;
+  }
+  .right {
+    width: 100%;
+  }
+  .left {
+    width: 100%;
+    min-height: 0rem;
+  }
+  .left > h1 {
+    font-size: 2.5rem;
+  }
+  .client {
+    width: 100%;
+  }
+  .addForm {
+    padding: 0rem;
+    width: 100%;
+  }
+  .addForm > h2 {
+    font-size: 1.2rem;
+  }
+  .addForm > button {
+    margin: 1rem 0.5rem;
+    padding: 1rem 1.5rem;
+  }
+}

@@ -51,7 +51,9 @@ export const Layout: React.FC = ({ children }) => {
       <section className={styles.main}>
         <input type="checkbox" className={styles.exInput} id="expand" />
         <label className={styles.expand} htmlFor="expand">
-          X
+          <span />
+          <span />
+          <span />
         </label>
         <nav className={styles.sidebar}>
           <div className={styles.smolAccountDiv}>{user && <UserInfo user={user} />}</div>

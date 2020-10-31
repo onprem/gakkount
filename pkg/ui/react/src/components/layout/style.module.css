@@ -155,14 +155,22 @@ a.active {
     transition: transform 0.2s ease-out;
   }
   .sidebar a {
-    padding: 1rem 0.3rem;
+    padding: 1rem 0.8rem;
   }
   .expand {
-    display: unset;
+    display: flex;
     position: absolute;
     right: 2rem;
-    top: 1.5rem;
-    font-weight: 700;
+    top: 1rem;
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+  }
+  .expand > span {
+    width: 2.5rem;
+    height: 5px;
+    background: var(--color-hero);
+    margin: 3px 0rem;
   }
   .exInput:checked ~ .sidebar {
     transform: translateX(0);
