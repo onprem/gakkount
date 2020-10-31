@@ -28,7 +28,8 @@
   margin: 0rem;
 }
 
-.accountDiv {
+.accountDiv,
+.smolAccountDiv {
   position: relative;
   padding: 0.8rem 4rem;
   border-left: solid 2px var(--color-bg-light);
@@ -63,8 +64,9 @@
 }
 
 .navPhoto {
-  width: 3rem;
-  height: 3rem;
+  --width: 3rem;
+  width: var(--width);
+  height: var(--width);
   border-radius: 50%;
   margin-right: 1rem;
 }
@@ -86,7 +88,7 @@
   border-right: solid 2px var(--color-bg-light);
 }
 
-.sidebar > a {
+.sidebar a {
   width: 100%;
   padding: 1.5rem;
   display: flex;
@@ -103,7 +105,7 @@ a.active {
   background: var(--color-hero-t);
 }
 
-.sidebar > hr {
+.sidebar hr {
   border: solid 1px var(--color-hero-t);
   width: 80%;
   margin: 1rem auto;
@@ -114,4 +116,70 @@ a.active {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.expand,
+.exInput,
+.mobileUser,
+.smolAccountDiv {
+  display: none;
+}
+
+@media only screen and (max-width: 500px) {
+  .logoDiv {
+    width: auto;
+  }
+  .logo {
+    width: 2rem;
+    margin: 0 0.5rem;
+  }
+  .accountDiv {
+    display: none;
+  }
+  .smolAccountDiv {
+    display: flex;
+    padding: 0.8rem;
+    margin-bottom: 0.5rem;
+  }
+  .navPhoto {
+    --width: 2.4rem;
+  }
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 70vw;
+    /* padding: 6rem 0rem; */
+    background: white;
+    /* opacity: 0.5; */
+    height: 100vh;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease-out;
+  }
+  .sidebar a {
+    padding: 1rem 0.3rem;
+  }
+  .expand {
+    display: unset;
+    position: fixed;
+    right: 2rem;
+    top: 1.5rem;
+    font-weight: 700;
+  }
+  .exInput:checked ~ .sidebar {
+    transform: translateX(0);
+  }
+  .exInput:checked + .expand::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.3);
+  }
+  .mobileUser {
+    display: unset;
+    width: 100%;
+  }
 }

@@ -22,7 +22,7 @@
 .main {
   display: flex;
   flex-direction: column;
-  width: 90%;
+  width: 100%;
   max-width: 600px;
   font-size: 1.2em;
   box-sizing: border-box;
@@ -66,4 +66,10 @@
   width: 100%;
   color: var(--color-bg-light);
   margin: 1.2rem 0rem;
+}
+
+@media only screen and (max-width: 500px) {
+  .mainLogo {
+    margin-right: 1rem;
+  }
 }
