@@ -75,6 +75,9 @@ export const Layout: React.FC = ({ children }) => {
               <NavLink activeClassName={styles.active} to="/admin/courses">
                 Courses
               </NavLink>
+              <NavLink activeClassName={styles.active} to="/admin/departments">
+                Departments
+              </NavLink>
             </>
           )}
           <div className={styles.mobileUser}>

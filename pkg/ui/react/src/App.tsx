@@ -18,6 +18,7 @@ import {
   Clients,
   Courses,
   Setup,
+  Departments,
 } from "./pages";
 
 import "./App.css";
@@ -81,6 +82,9 @@ function App() {
             </ProtectedRoute>
             <ProtectedRoute exact path="/admin/courses">
               <Courses />
+            </ProtectedRoute>
+            <ProtectedRoute exact path="/admin/departments">
+              <Departments />
             </ProtectedRoute>
             <Route path="/setup">
               <Setup />

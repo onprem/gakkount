@@ -4,8 +4,9 @@ import Login from "./login";
 import Profile from "./profile";
 import Users from "./admin/users";
 import Courses from "./admin/courses";
+import Departments from "./admin/departments";
 import Logout from "./logout";
 import Clients from "./clients";
 import Setup from "./setup";
 
-export { OAuthLogin, Consent, Login, Logout, Profile, Users, Clients, Courses, Setup };
+export { OAuthLogin, Consent, Login, Logout, Profile, Users, Clients, Courses, Setup, Departments };
