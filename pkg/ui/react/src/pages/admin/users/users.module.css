@@ -20,6 +20,14 @@
   align-items: center;
 }
 
+.options button {
+  margin: 0rem 1rem;
+}
+
+.addForm {
+  composes: addForm from "../../clients/style.module.css";
+}
+
 .list {
   width: 100%;
   display: flex;
@@ -69,6 +77,12 @@
 @media only screen and (max-width: 500px) {
   .options {
     justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+  .options button {
+    font-size: 0.9rem;
+    margin: 0rem;
+    margin-right: 0.3rem;
   }
   .rollSpan,
   .courseSpan {

@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import useSWR from "swr";
+
 import { Select } from "../../../components/form";
 import Layout from "../../../components/layout";
+import AddUser from "./addUser";
 
 import { User } from "../../../interfaces";
+
 import styles from "./users.module.css";
 
 const UserRow: React.FC<{ user: User }> = ({ user }) => {
@@ -33,8 +36,6 @@ const Users = () => {
     `/api/users?role=${role}`
   );
 
-  if (isValidating) return <h2>Loading...</h2>;
-
   const list = data?.users.map((u) => <UserRow user={u} key={u.id} />);
 
   return (
@@ -42,6 +43,7 @@ const Users = () => {
       <div className={styles.main}>
         <h1 className={styles.head}>All Users</h1>
         <div className={styles.options}>
+          <AddUser />
           <Select onChange={(e) => setRole(e.target.value as User["role"])} value={role}>
             <option value="student">Student</option>
             <option value="faculty">Faculty</option>
@@ -50,16 +52,18 @@ const Users = () => {
             <option value="misc">Misc.</option>
           </Select>
         </div>
-        <div className={styles.list}>
-          <div className={`${styles.user} ${styles.topUser}`}>
-            <span className={styles.idSpan}>ID</span>
-            <span className={styles.nameSpan}>Name</span>
-            <span className={styles.emailSpan}>Email</span>
-            <span className={styles.rollSpan}>RollNo.</span>
-            <span className={styles.courseSpan}>Course</span>
+        {!isValidating && (
+          <div className={styles.list}>
+            <div className={`${styles.user} ${styles.topUser}`}>
+              <span className={styles.idSpan}>ID</span>
+              <span className={styles.nameSpan}>Name</span>
+              <span className={styles.emailSpan}>Email</span>
+              <span className={styles.rollSpan}>RollNo.</span>
+              <span className={styles.courseSpan}>Course</span>
+            </div>
+            {list}
           </div>
-          {list}
-        </div>
+        )}
       </div>
     </Layout>
   );

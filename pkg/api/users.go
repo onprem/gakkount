@@ -173,6 +173,9 @@ func (a *API) handleNewUser(c *gin.Context) {
 		// staff
 		Designation string `json:"designation"`
 		Salutation  string `json:"salutation"`
+		// edges
+		CourseID     int `json:"courseID"`
+		DepartmentID int `json:"departmentID"`
 	}
 
 	if err := c.ShouldBindJSON(&i); err != nil {
@@ -187,10 +190,17 @@ func (a *API) handleNewUser(c *gin.Context) {
 
 	role := user.Role(i.Role)
 
+	hash, err := generateHash(i.Password)
+	if err != nil {
+		respInternalServerErr(fmt.Errorf("api: create user: gen hash: %w", err), c)
+		return
+	}
+
 	x := a.store.User.Create().
 		SetName(i.Name).
 		SetEmail(i.Email).
 		SetRole(role).
+		SetHash(hash).
 		SetPhoto(i.Photo).
 		SetAltEmail(strings.ToLower(i.AltEmail)).
 		SetPhone(i.Phone).
@@ -208,6 +218,13 @@ func (a *API) handleNewUser(c *gin.Context) {
 			return
 		}
 		x.SetRollNo(i.RollNo).SetAdmissionTime(i.AdmissionTime).SetCourseEndTime(i.CourseEndTime)
+		if i.CourseID != 0 {
+			x.SetCourseID(i.CourseID)
+		}
+	case user.RoleFaculty:
+		if i.DepartmentID != 0 {
+			x.SetDepartmentID(i.DepartmentID)
+		}
 	case user.RoleStaff:
 		x.SetDesignation(i.Designation)
 	}

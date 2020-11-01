@@ -10,9 +10,9 @@ import Modal from "../../components/modal";
 import { ReactComponent as LoadingIcon } from "../../assets/three-dots.svg";
 import { ReactComponent as ClientIcon } from "../../assets/client.svg";
 import { ExtClient } from "../../interfaces";
+import useSWRPost from "../../hooks/useSWRPost";
 
 import styles from "./style.module.css";
-import useSWRPost from "../../hooks/useSWRPost";
 
 interface Payload {
   name: string;
