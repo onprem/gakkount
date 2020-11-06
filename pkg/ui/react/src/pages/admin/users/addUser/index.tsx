@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import useSWR, { mutate } from "swr";
 import { useForm } from "react-hook-form";
+import { useToasts } from "react-toast-notifications";
 
 import { Select, Label, Text } from "../../../../components/form";
 import Button from "../../../../components/button";
@@ -9,6 +10,7 @@ import { ReactComponent as Loader } from "../../../../assets/three-dots.svg";
 
 import { User, Course, Department } from "../../../../interfaces";
 import useSWRPost from "../../../../hooks/useSWRPost";
+import useFormErrors from "../../../../hooks/useFormErrors";
 
 import styles from "../users.module.css";
 
@@ -80,7 +82,8 @@ interface StepProps {
 }
 
 const StepStaff = ({ values, onSubmit, setIsOpen, isValidating }: StepProps) => {
-  const { register, handleSubmit } = useForm<Payload>();
+  const { register, handleSubmit, errors } = useForm<Payload>();
+  useFormErrors(errors);
   return (
     <WrapperStep
       values={values}
@@ -104,7 +107,9 @@ const StepStaff = ({ values, onSubmit, setIsOpen, isValidating }: StepProps) => 
 const StepFaculty = ({ values, onSubmit, setIsOpen, isValidating }: StepProps) => {
   const { data } = useSWR<{ status: string; departments: Department[] }>("/api/departments");
 
-  const { register, handleSubmit } = useForm<Payload>();
+  const { register, handleSubmit, errors } = useForm<Payload>();
+  useFormErrors(errors);
+
   return (
     <WrapperStep
       values={values}
@@ -133,7 +138,9 @@ const StepFaculty = ({ values, onSubmit, setIsOpen, isValidating }: StepProps) =
 const StepStudent = ({ values, onSubmit, setIsOpen, isValidating }: StepProps) => {
   const { data } = useSWR<{ status: string; courses: Course[] }>("/api/courses");
 
-  const { register, handleSubmit } = useForm<Payload>();
+  const { register, handleSubmit, errors } = useForm<Payload>();
+  useFormErrors(errors);
+
   return (
     <WrapperStep
       values={values}
@@ -176,7 +183,8 @@ const StepOne = ({
 }) => {
   const [role, setRole] = useState<User["role"]>();
 
-  const { register, handleSubmit, getValues } = useForm<Payload>();
+  const { register, handleSubmit, getValues, errors } = useForm<Payload>();
+  useFormErrors(errors);
 
   if (role === "student")
     return (
@@ -276,14 +284,18 @@ const StepOne = ({
 const AddUser = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [role, setRole] = useState<User["role"]>();
+  const { addToast } = useToasts();
   const [createUser, { isValidating }] = useSWRPost<string>("/api/user", {
     onSuccess: (res) => {
       if (res.status === "success") {
         mutate(`/api/users?role=${role}`);
+        addToast(res?.message || "New user created successfully", { appearance: "success" });
         setIsOpen(false);
-      } else console.log(res);
+      } else addToast(res?.error || "Something went wrong", { appearance: "error" });
     },
-    onError: console.log,
+    onError: (err) => {
+      addToast(err?.error || "Something went wrong.", { appearance: "error" });
+    },
   });
 
   const onSubmit = (values: Payload) => {

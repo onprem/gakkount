@@ -1,25 +1,32 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Redirect, useHistory } from "react-router-dom";
+import { useToasts } from "react-toast-notifications";
 
 import { Text, Label } from "../../components/form";
 import Button from "../../components/button";
 import { useAuth } from "../../contexts/auth";
 import useSWRPost from "../../hooks/useSWRPost";
+import useFormErrors from "../../hooks/useFormErrors";
 import { ReactComponent as LoadingIcon } from "../../assets/three-dots.svg";
 import logoImg from "../../assets/logo.png";
 
 import styles from "../login/login.module.css";
 
 export const Setup: React.FC = () => {
-  const { register, handleSubmit } = useForm();
+  const { addToast } = useToasts();
+  const { register, handleSubmit, errors } = useForm();
+  useFormErrors(errors);
   const { isLoggedIn } = useAuth();
   const history = useHistory();
   const [runSetup, { isValidating }] = useSWRPost<string>("/api/setup", {
     onSuccess: (res) => {
       if (res.status === "success") {
         history.replace("/login");
-      }
+      } else addToast(res?.error || "Something went wrong", { appearance: "error" });
+    },
+    onError: (err) => {
+      addToast(err?.error || "Something went wrong.", { appearance: "error" });
     },
   });
 

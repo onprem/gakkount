@@ -1,6 +1,7 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 import useSWR from "swr";
+import { useToasts } from "react-toast-notifications";
 import Button from "../../components/button";
 import styles from "./consent.module.css";
 import useSWRPost from "../../hooks/useSWRPost";
@@ -20,14 +21,20 @@ const useConsentChallenge = (cc: string) => {
 
 export const Consent: React.FC = () => {
   const location = useLocation();
+  const { addToast } = useToasts();
+
   const query = new URLSearchParams(location.search);
   const cc = query.get("consent_challenge") || "";
   const [giveConsent, { isValidating }] = useSWRPost("/oauth/consent", {
     onSuccess: (res) => {
-      console.log(res);
       if (res.status === "success") {
         window.location = res.redirectTo;
+      } else {
+        addToast(res?.error || "Something went wrong", { appearance: "error" });
       }
+    },
+    onError: (err) => {
+      addToast(err?.error || "Something went wrong.", { appearance: "error" });
     },
   });
 
@@ -38,7 +45,8 @@ export const Consent: React.FC = () => {
         <LoadingIcon style={{ height: "3em" }} />
       </div>
     );
-  if (error) return <div className={styles.container}>Some error occurred.</div>;
+  if (error || consent?.status !== "success")
+    return <div className={styles.container}>Some error occurred.</div>;
 
   const handleSubmit = (allow: boolean) => {
     giveConsent(
@@ -50,7 +58,7 @@ export const Consent: React.FC = () => {
   };
 
   const { user, client } = consent;
-  console.log("concent", consent, client);
+
   return (
     <div className={styles.container}>
       <div className={styles.logoDiv}>

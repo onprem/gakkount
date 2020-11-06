@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import useSWR, { mutate } from "swr";
 import { useForm } from "react-hook-form";
+import { useToasts } from "react-toast-notifications";
 
 import Layout from "../../components/layout";
 import Button from "../../components/button";
@@ -11,6 +12,7 @@ import { ReactComponent as LoadingIcon } from "../../assets/three-dots.svg";
 import { ReactComponent as ClientIcon } from "../../assets/client.svg";
 import { ExtClient } from "../../interfaces";
 import useSWRPost from "../../hooks/useSWRPost";
+import useFormErrors from "../../hooks/useFormErrors";
 
 import styles from "./style.module.css";
 
@@ -28,15 +30,21 @@ interface Payload {
 
 const AddClient = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const { register, handleSubmit } = useForm<Payload>();
+  const { addToast } = useToasts();
+  const { register, handleSubmit, errors } = useForm<Payload>();
+  useFormErrors(errors);
+
   const [createClient, { isValidating }] = useSWRPost<string>("/api/client", {
     onSuccess: (res) => {
       if (res.status === "success") {
         mutate("/api/clients");
+        addToast(res?.message || "New client created successfully", { appearance: "success" });
         setIsOpen(false);
-      } else console.log(res);
+      } else addToast(res?.error || "Something went wrong", { appearance: "error" });
     },
-    onError: console.log,
+    onError: (err) => {
+      addToast(err?.error || "Something went wrong.", { appearance: "error" });
+    },
   });
 
   const onSubmit = (values: Payload) => {
@@ -163,7 +171,7 @@ const AddClient = () => {
             Cancel
           </Button>
           <Button style={{ background: "var(--color-success)" }} disabled={isValidating}>
-            Submit
+            {isValidating ? <LoadingIcon style={{ height: "1rem" }} /> : `Submit`}
           </Button>
         </form>
       </Modal>
@@ -173,6 +181,7 @@ const AddClient = () => {
 
 interface Response {
   status: string;
+  message?: string;
   error?: string;
   clients?: ExtClient[];
 }

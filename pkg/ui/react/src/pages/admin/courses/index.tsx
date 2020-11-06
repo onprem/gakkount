@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import useSWR, { mutate } from "swr";
 import { useForm } from "react-hook-form";
+import { useToasts } from "react-toast-notifications";
 
 import Layout from "../../../components/layout";
 import Button from "../../../components/button";
@@ -9,6 +10,7 @@ import Modal from "../../../components/modal";
 
 import { Course } from "../../../interfaces";
 import useSWRPost from "../../../hooks/useSWRPost";
+import useFormErrors from "../../../hooks/useFormErrors";
 import { ReactComponent as Loader } from "../../../assets/three-dots.svg";
 
 import styles from "./style.module.css";
@@ -21,15 +23,21 @@ interface Payload {
 
 const AddCourse = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const { register, handleSubmit } = useForm<Payload>();
+  const { addToast } = useToasts();
+  const { register, handleSubmit, errors } = useForm<Payload>();
+  useFormErrors(errors);
+
   const [createCourse, { isValidating }] = useSWRPost<string>("/api/course", {
     onSuccess: (res) => {
       if (res.status === "success") {
         mutate("/api/courses");
+        addToast(res?.message || "New course created successfully", { appearance: "success" });
         setIsOpen(false);
-      } else console.log(res);
+      } else addToast(res?.error || "Something went wrong", { appearance: "error" });
     },
-    onError: console.log,
+    onError: (err) => {
+      addToast(err?.error || "Something went wrong.", { appearance: "error" });
+    },
   });
 
   const onSubmit = (values: Payload) => {

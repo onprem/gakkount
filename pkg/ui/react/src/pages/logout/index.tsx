@@ -1,14 +1,23 @@
 import React from "react";
 import { Redirect } from "react-router-dom";
 import useSWR from "swr";
+import { useToasts } from "react-toast-notifications";
 import { useAuth } from "../../contexts/auth";
 import { ReactComponent as LoadingIcon } from "../../assets/three-dots.svg";
 
 export const Logout: React.FC = () => {
   const { isLoggedIn, setIsLoggedIn } = useAuth();
+  const { addToast } = useToasts();
+
   useSWR("/api/logout", {
     onSuccess: (res) => {
       if (res.status === "success") setIsLoggedIn(false);
+      else {
+        addToast(res?.error || "Something went wrong", { appearance: "error" });
+      }
+    },
+    onError: (err) => {
+      addToast(err?.error || "Something went wrong.", { appearance: "error" });
     },
   });
 
